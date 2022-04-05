@@ -71,11 +71,12 @@ function getAdmin() public view returns(address  [] memory){
     }
 
 
-   //recieves array from frontend for transactions
+   //recieves two array, obe for addresses, and second for reward value from frontend for transactions
 
 
 function batchTokensTransfer(address[] calldata customers, 
                              uint256[] calldata reward) isAdmin(msg.sender) external {
+                             //check that the two arrays are equal in length
  require(customers.length == reward.length);
    for (uint i = 0; i < customers.length; i++) {
 
