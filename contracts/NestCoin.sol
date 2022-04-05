@@ -73,14 +73,15 @@ function getAdmin() public view returns(address  [] memory){
 
    //recieves array from frontend for transactions
 
-function batchTokensTransfer(address[] calldata loyalCustomer) isAdmin(msg.sender) external {
 
-   for (uint i = 0; i < loyalCustomer.length && i <= 200; i++) {
-       //minting new token rather than transfer
-         _mint(loyalCustomer[i], reward);
+function batchTokensTransfer(address[] calldata customers, 
+                             uint256[] calldata reward) isAdmin(msg.sender) external {
+ require(customers.length == reward.length);
+   for (uint i = 0; i < customers.length; i++) {
 
-         //emtting actions
-    emit sendReward(loyalCustomer[i], reward);
+        
+        _mint(customers[i], reward[i]);
+    emit sendReward(customers[i], reward[i]);
       
    }
 }
