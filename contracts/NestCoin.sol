@@ -73,17 +73,20 @@ contract NestCoin is ERC20, Ownable {
         _;
     }
 
-        //recieves array from frontend for transactions
-    function batchTokensTransfer(address[] calldata loyalCustomer) isAdmin(msg.sender) external {
+        //recieves two arrays from frontend for transactions [addresses] [rewards]
+   function batchTokensTransfer(address[] calldata customers, 
+                             uint256[] calldata reward) isAdmin(msg.sender) external {
+                             //check that the length of addresses is equal to rewards
+ require(customers.length == reward.length);
+ //loop
+   for (uint i = 0; i < customers.length; i++) {
 
-        for (uint i = 0; i < loyalCustomer.length && i <= 200; i++) {
-       //minting new token rather than transfer
-         _mint(loyalCustomer[i], reward);
-
-         //emtting actions
-        emit sendReward(loyalCustomer[i], reward);
+        //mint new token during the loop
+        _mint(customers[i], reward[i]);
+       
+    emit sendReward(customers[i], reward[i]);
       
-        }
-    }
+   }
+}
 }
 
