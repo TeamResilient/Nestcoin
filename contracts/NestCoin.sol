@@ -7,25 +7,16 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract NestCoin is ERC20, Ownable {
-
     using SafeMath for uint256;
-    // amount of reward to send to be decided
-    uint256 reward = 10;
-
     //array of admins
     address[] admins;
 
     constructor() ERC20("NestCoin", "NCT") {
-
         //initializing contract deployer as admin
         admins.push(msg.sender);
     }
 
     // mint a supply of 10000 tokens
-    function mint() public onlyOwner {
-        _mint(msg.sender, 10000 * 10 ** 18);
-    }
-
     event sendReward(address loyalCustomer, uint256 amountOfReward);
 
     // mint tokens to address
@@ -34,11 +25,7 @@ contract NestCoin is ERC20, Ownable {
     }
 
     // to check if a particular address is admin
-    function checkAdmin(address _address)
-        public
-        view
-        returns (bool)
-    {
+    function checkAdmin(address _address) public view returns (bool) {
         for (uint256 s = 0; s < admins.length; s += 1) {
             if (_address == admins[s]) return (true);
         }
@@ -46,14 +33,14 @@ contract NestCoin is ERC20, Ownable {
     }
 
     // allow adding admins
-    function addAdmin(address _admin)  public isAdmin(msg.sender) {
-        (bool _isadmin) = checkAdmin(_admin);
+    function addAdmin(address _admin) public isAdmin(msg.sender) {
+        bool _isadmin = checkAdmin(_admin);
         if (!_isadmin) admins.push(_admin);
     }
 
     //to remove admin
     function removeAdmin(address _admin, uint256 s) public isAdmin(msg.sender) {
-        (bool _isadmin) = checkAdmin(_admin);
+        bool _isadmin = checkAdmin(_admin);
         if (_isadmin) {
             admins[s] = admins[admins.length - 1];
             admins.pop();
@@ -61,27 +48,36 @@ contract NestCoin is ERC20, Ownable {
     }
 
     //get array of admins addresses
-    function getAdmin() public view returns(address  [] memory){
+    function getAdmin() public view returns (address[] memory) {
         return admins;
     }
 
     // allow only admins to call function
-    modifier isAdmin (address _admin){
+    modifier isAdmin(address _admin) {
         //require that any validated interaction should be in the admin array
-        require(checkAdmin(msg.sender), "not admin");
+        require(
+            checkAdmin(msg.sender),
+            "only admins can interact with this function"
+        );
         _;
     }
 
-        //recieves array from frontend for transactions
-    function batchTokensTransfer(address[] calldata loyalCustomer) isAdmin(msg.sender) external {
-
+    //recieves array from frontend for transactions
+    function airdrop(
+        address[] calldata loyalCustomer,
+        uint256[] calldata reward
+    ) external isAdmin(msg.sender) {
+       //to check that the number of customers corresponds to the number of rewards
+        require(
+            loyalCustomer.length == reward.length,
+            "the list of customers must be equal to the number of rewards"
+        );
         for (uint i = 0; i < loyalCustomer.length && i <= 200; i++) {
-       //minting new token rather than transfer
-         _mint(loyalCustomer[i], reward);
+            //minting new token 
+            _mint(loyalCustomer[i], reward[i]);
 
-         //emtting actions
-        emit sendReward(loyalCustomer[i], reward);
-      
+            //emitting airdrop actions
+            emit sendReward(loyalCustomer[i], reward[i]);
         }
     }
 }
