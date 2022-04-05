@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-
+// @frontend team - this contract address is 0x579Ca32a74D2af3656110253C382F3a784C64409
 function App() {
   return (
     <div className="App">
