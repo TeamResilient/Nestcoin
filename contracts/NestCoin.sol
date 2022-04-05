@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
@@ -62,6 +63,7 @@ contract NestCoin is ERC20, Ownable {
         _;
     }
 
+
     //recieves array from frontend for transactions
     function airdrop(
         address[] calldata loyalCustomer,
@@ -80,4 +82,6 @@ contract NestCoin is ERC20, Ownable {
             emit sendReward(loyalCustomer[i], reward[i]);
         }
     }
+
 }
+
