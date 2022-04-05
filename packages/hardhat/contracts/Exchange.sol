@@ -19,5 +19,12 @@ contract Nxt {
             transferFrom(owner, _userAddr[i], _amount[i]);
         }
     }   
+
+    function pay(uint amountOfTokens) public {
+        
+        // Transfer token 
+        nestcoin.transferFrom(msg.sender, address(this), amountOfTokens);
+
+    }
 }
  
