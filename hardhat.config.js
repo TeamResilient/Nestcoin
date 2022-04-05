@@ -20,7 +20,7 @@ module.exports = {
   solidity: "0.8.4",
   networks:{
     rinkeby:{
-      accounts:[''],
+      accounts:['80ea7b519a19e334d52189abbd6b1854300d3ec01b917200d436859591afa331'],
       url:""
     }
   }
