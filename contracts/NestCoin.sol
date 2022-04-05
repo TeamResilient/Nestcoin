@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
@@ -85,3 +86,4 @@ contract NestCoin is ERC20, Ownable {
         }
     }
 }
+
