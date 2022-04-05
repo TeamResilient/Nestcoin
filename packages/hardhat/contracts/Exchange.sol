@@ -9,7 +9,7 @@ import "./Nestcoin.sol";
 contract Nxt {
     NestCoin public nestcoin;
 
-    event Pay(address payer, uint amount, string ref);
+    event Payment(address indexed payer, uint amount, string indexed ref);
 
     constructor(address tokenAddr) {
         nestcoin = NestCoin(tokenAddr);
@@ -29,7 +29,7 @@ contract Nxt {
         nestcoin.transferFrom(msg.sender, address(this), amountOfTokens);
 
         // Emit Pay event
-        emit Pay(msg.sender, amountOfTokens, ref);
+        emit Payment(msg.sender, amountOfTokens, ref);
 
     }
 }
