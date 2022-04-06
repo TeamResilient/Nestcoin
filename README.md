@@ -13,8 +13,3 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
-
-
-git clone https://github.com/TeamResilient/Nestcoin.git
-yarn install
-npx hardhat compile
