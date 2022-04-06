@@ -15,7 +15,6 @@ npx hardhat help
 ```
 
 
-
 git clone https://github.com/TeamResilient/Nestcoin.git
-npm install --save-dev @nomiclabs/hardhat-ethers ethers @nomiclabs/hardhat-waffle ethereum-waffle chai @openzeppelin/contracts
+yarn install
 npx hardhat compile

@@ -29,13 +29,13 @@ contract NestCoin is ERC20, Ownable {
         return (false);
     }
 
-    // allow adding admins
+    // to add an admin
     function addAdmin(address _admin) public isAdmin(msg.sender) {
         bool _isadmin = checkAdmin(_admin);
         if (!_isadmin) admins.push(_admin);
     }
 
-    //to remove admin
+    // to remove an admin
     function removeAdmin(address _admin, uint256 s) public isAdmin(msg.sender) {
         bool _isadmin = checkAdmin(_admin);
         if (_isadmin) {
@@ -44,14 +44,14 @@ contract NestCoin is ERC20, Ownable {
         }
     }
 
-    //get array of admins addresses
+    // get array of admins addresses
     function getAdmin() public view returns (address[] memory) {
         return admins;
     }
 
     // allow only admins to call function
     modifier isAdmin(address _admin) {
-        //require that any validated interaction should be in the admin array
+        // require that any validated interaction should be in the admin array
         require(
             checkAdmin(msg.sender),
             "only admins can interact with this function"
@@ -59,7 +59,7 @@ contract NestCoin is ERC20, Ownable {
         _;
     }
 
-    //recieves array from frontend for transactions
+    // recieves array from frontend for transactions
     function airdrop(
         address[] calldata loyalCustomer,
         uint256[] calldata reward
