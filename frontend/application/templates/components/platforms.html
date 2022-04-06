@@ -1,0 +1,34 @@
+<div class=" my-2 bg-white max-w-5xl rounded-md shadow-md flex flex-col justify-center content-center" style = "margin: 25px;">
+    <div class="py-3 pl-6 font-medium text-lg border-b-2">Available platforms</div>
+    <div class=" flex flex-col justify-center">
+        <div class="flex justify-center">
+            <img src='https://svgshare.com/i/a85.svg' title='refer and earn' />
+        </div>
+        <div class=" text-lg text-center my-2">Send notifications using specific platforms</div>
+        
+        
+        <div class=" flex flex-wrap justify-center ml-4 mb-4 mr-4" id="copied"></div>
+        <div class=" flex justify-center space-x-4 m-4">
+            <svg width="44" height="45" viewBox="0 0 44 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M39.6 5.38892H4.4C1.98 5.38892 0.022 7.38267 0.022 9.81947L0 36.4028C0 38.8396 1.98 40.8334 4.4 40.8334H39.6C42.02 40.8334 44 38.8396 44 36.4028V9.81947C44 7.38267 42.02 5.38892 39.6 5.38892ZM39.6 14.25L22 25.3264L4.4 14.25V9.81947L22 20.8959L39.6 9.81947V14.25Z"
+                    fill="#334D6E" />
+            </svg>
+            
+        </div>
+    </div>
+</div>
+
+{% block script %}
+<script>
+    function copytext() {
+            var copyText = document.getElementById("alcherid");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+
+            document.getElementById("copied").innerHTML="Copied id successfully"
+        }
+</script>
+{% endblock %}

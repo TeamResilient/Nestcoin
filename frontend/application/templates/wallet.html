@@ -1,0 +1,175 @@
+{% extends 'basic.html'%}
+{%block title%}Upload Data {%endblock%}
+{% block body %}
+<style>
+    .custom-btn {
+        width: 230px;
+        height: 140px;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px 25px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 500;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+         box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+         7px 7px 20px 0px rgba(0,0,0,.1),
+         4px 4px 5px 0px rgba(0,0,0,.1);
+        outline: none;
+      }
+      .btn-3 {
+        background: rgb(0,172,238);
+      background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
+        width: 130px;
+        height: 40px;
+        line-height: 42px;
+        padding: 0;
+        border: none;
+        
+      }
+      .btn-3 span {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .btn-3:before,
+      .btn-3:after {
+        position: absolute;
+        content: "";
+        right: 0;
+        top: 0;
+         background: rgba(2,126,251,1);
+        transition: all 0.3s ease;
+      }
+      .btn-3:before {
+        height: 0%;
+        width: 2px;
+      }
+      .btn-3:after {
+        width: 0%;
+        height: 2px;
+      }
+      .btn-3:hover{
+         background: transparent;
+        box-shadow: none;
+      }
+      .btn-3:hover:before {
+        height: 100%;
+      }
+      .btn-3:hover:after {
+        width: 100%;
+      }
+      .btn-3 span:hover{
+         color: rgba(2,126,251,1);
+      }
+      .btn-3 span:before,
+      .btn-3 span:after {
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: 0;
+         background: rgba(2,126,251,1);
+        transition: all 0.3s ease;
+      }
+      .btn-3 span:before {
+        width: 2px;
+        height: 0%;
+      }
+      .btn-3 span:after {
+        width: 0%;
+        height: 2px;
+      }
+      .btn-3 span:hover:before {
+        height: 100%;
+      }
+      .btn-3 span:hover:after {
+        width: 100%;
+      }
+      .dimsplay {
+          display: none;
+        font-size: 17px;
+        margin-left: 20px;
+        margin-top: 15px;
+    }
+</style>
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+        <div class="flex">
+
+            <div class="subpbody">
+                <div class=" bg-blue-50 flex  ">
+
+
+
+                    <div class="mx-4 flex-grow" style = "margin-top: 20px;">
+
+                        <div class=" flex flex-wrap ">
+                            <div class=" bg-white max-w-4xl rounded-lg w-screen shadow-md">
+                                <div>
+                                    <div class="py-3 pl-6 font-medium text-xl border-b-2 font-semibold">Connect Wallet </div>
+                                    <div class="display:flex, flex-col py-4 ">
+                                        <p class=" font-small text-xl ml-5 py-2"
+                                        style="font-size: 17px;color:rgb(109, 109, 109)">Explore the crypto world. Send rewards to loyal customers.</p>
+                                        <button id="connect" class="custom-btn btn-3 ml-5 mt-3"><span>Connect Wallet</span></button>
+
+                                        <section id="wallet_info" class="dimsplay">
+                                            <h1 class="pt-2" id="wallet_heading"></h1>
+                                            <h1 class="pt-2" id="wallet_address"></h1>
+                                            <h1 class="pt-2">Balance: <span id="wallet_balance"></span></h1>
+                                        </section>
+                                        
+                                    </div>
+                            
+                              
+                                    <div class="  w-80 border-gray-400 rounded mx-4 m-{5}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js"></script>
+<script>
+    const getWeb3 = async() => {
+        return new Promise(async(resolve, reject) =>{
+
+            const web3 = new Web3(window.ethereum)
+            try{
+                await window.ethereum.request({method: "eth_requestAccounts"})
+                resolve(web3)
+            }catch(e){
+                reject(e);
+            }
+        })
+    }
+
+    document.addEventListener("DOMContentLoaded",()=> {
+
+        document.getElementById("connect").addEventListener('click', async() => {
+
+            const web3 = await getWeb3();
+            const walletAddress = await web3.eth.requestAccounts();
+            const walletBalanceInWei = await web3.eth.getBalance(walletAddress[0]);
+            const walletBalanceInEth = Math.round(Web3.utils.fromWei(walletBalanceInWei)*1000) / 1000; 
+
+            document.getElementById("wallet_info").style.display = "block";
+            document.getElementById("wallet_heading").innerText = "Metamusk Connected!";
+            document.getElementById("wallet_address").innerText = "Wallet Address: "+ walletAddress;
+            document.getElementById("wallet_balance").innerText = walletBalanceInEth
+            document.getElementById("connect").style.display = "none";
+        })
+    })
+</script>
+
+{%endblock%}

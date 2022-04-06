@@ -1,0 +1,137 @@
+{% extends 'basic.html'%}
+{%block title%}Notification History {%endblock%}
+{%block style%}
+<style>
+    .subideabody {
+        font-family: 'Poppins';
+        background-color: #f8f8f8;
+    }
+
+    .sform {
+        width: 70%;
+    }
+
+
+    .bell {
+        position: fixed;
+        top: 1vw;
+        right: 1vw;
+    }
+
+    #form_button {
+        background-color: #109CF1;
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 15px;
+        padding-right: 25px;
+        padding-left: 25px;
+        cursor: pointer;
+        border-radius: 10px;
+        font-family: 'Poppins';
+    }
+
+    input[type=text] {
+        border: none;
+        background-color: transparent;
+        resize: none;
+        outline: none;
+    }
+
+    input[type=textarea] {
+        outline: none;
+    }
+    #history
+    {
+        margin-left: 22px;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    #history tr {
+        height: 50px;
+    }
+    #history td
+    {
+        padding: 0 20px 0 20px;
+    }
+    #history tr:hover {background-color: #ddd;cursor:pointer;}
+    #history th {background-color: #f2f2f2;
+        padding: 0 20px 0 20px;}
+</style>
+{%endblock%}
+{% block body %}
+
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+        <div class="flex">
+            <div>
+                <style>
+                    .form-input {
+                        border: none;
+                        background-color: transparent;
+                        width: 580px;
+                        outline: none;
+                    }
+                </style>
+                <div class="subideabody" style="font-family: 'Roboto';">
+                    <div class=" bg-blue-50 flex  ">
+
+                        <div class="mx-4 flex-grow">
+
+                            <br>
+                            <div class=" flex flex-wrap ">
+                                <div class=" bg-white max-w-4xl rounded-lg w-screen shadow-md">
+                                    <div>
+                                        <div class="py-3 pl-6 font-medium text-xl border-b-2 font-semibold">Notification History </div>
+                                        <br>
+                                        <div class="py-3 pl-6 border-b-2" style = "width:800px">
+                                            <table style = "width: 100%;">
+                                                <tr>
+                                                    <td>Scheduled date: </td>
+                                                    <td>{{notif.scheduled_date}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Body: </td>
+                                                    <td>{{notif.message_body}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Date: </td>
+                                                    <td>{{notif.date_time}}</td>
+                                                </tr>
+                                            </table>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+{%endblock%}
+{% block script %}
+<script>
+    const btn = document.querySelector(".mobile");
+    const sidebar = document.querySelector(".navbar");
+    const arrow = document.querySelector(".side");
+    const middle = document.querySelector(".Middle");
+    const ak = document.querySelector(".ak");
+
+    if (screen.width < 672) {
+        alert('Less than 960');
+        ak.classList.add("hidden")
+
+    }
+
+    
+</script>
+
+{% endblock %}
