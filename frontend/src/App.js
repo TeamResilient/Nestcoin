@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from './logo.svg';
 import './App.css';
-
+// @frontend team - this contract address is 0x579Ca32a74D2af3656110253C382F3a784C64409
 function App() {
  
   // declare array for the loyal customer addresses
@@ -10,8 +10,6 @@ function App() {
   const [reward, setreward] = useState([]);
   // a boolean state to allow that only one of upload file button and airdrop token buttons show at a time
   const [isFileUpload, setisFileUpload] =useState(false);
-  
-  
   
   // function to convert csv file from input file to arr, it receives a str paramater
   const csvToArray=(str)=> {
@@ -95,7 +93,6 @@ let address= secondArr.map((item) =>{
 {!isFileUpload && (
           <input type="file" id="csvFile" accept=".csv" onChange={handleFile}/>
         )}
-    
         
     <br />
        //this itenary ensures that only the option to airdrop Token is not shown, until file has been uploaded.
