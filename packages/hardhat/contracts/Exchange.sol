@@ -19,16 +19,16 @@ contract Nxt is Ownable {
      function batchTokenTransfer(address[] memory _userAddr,  uint256[] memory _amount) public  onlyOwner {
         require(_userAddr.length == _amount.length, "Number of Addresses must match amount");
         require(_userAddr.length <= 200, "Array must not be greater than 200");
-        require(_amount >= address(this).balance, "Not enough nestcoin to send");
         for (uint256 i = 0; i < _userAddr.length; i++) {
-            if(address(_userAddr[i] != address(0))){
+            require(_amount[i] >= address(this).balance, "Not enough nestcoin to send");
+            if(address(_userAddr[i]) != address(0)){
                 nestcoin.transfer(_userAddr[i], _amount[i]);
             }
         }
     }   
 
     // with a ref, every payment is traceable to the value provided
-    function pay(uint amountOfTokens, string ref) public {
+    function pay(uint amountOfTokens, string memory ref) public {
 
         // Transfer token 
         nestcoin.transferFrom(msg.sender, address(this), amountOfTokens);
