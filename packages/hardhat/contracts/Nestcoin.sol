@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Nestcoin is ERC20, ERC20Burnable, Ownable {
     constructor() ERC20("Nestcoin", "NTK") {
-        _mint(msg.sender, 1000 * 10 ** decimals());
+        
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
