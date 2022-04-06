@@ -13,10 +13,13 @@ contract Nxt {
         nestcoin = NestCoin(tokenAddr);
     }
 
-     function batchTokenTransfer(address owner, address[] memory _userAddr,  uint256[] memory _amount) public  {
+     function batchTokenTransfer(address[] memory _userAddr,  uint256[] memory _amount) public  {
         require(_userAddr.length == _amount.length, "Number of Addresses must match amount");
+        require(_userAddr.length <= 200, "Array must not be greater than 200");
         for (uint256 i = 0; i < _userAddr.length; i++) {
-            transferFrom(owner, _userAddr[i], _amount[i]);
+            if(address(_userAddr[i] != address(0))){
+                nestcoin.transfer(userAddr[i], _amount[i]);
+            }
         }
     }   
 }
