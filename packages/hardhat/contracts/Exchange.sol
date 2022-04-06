@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Nestcoin.sol";
 
 
-contract Nxt {
-    NestCoin public nestcoin;
+contract Nxt is Ownable {
+    Nestcoin public nestcoin;
 
     event Payment(address indexed payer, uint amount, string indexed ref);
 
     constructor(address tokenAddr) {
-        nestcoin = NestCoin(tokenAddr);
+        nestcoin = Nestcoin(tokenAddr);
     }
 
      function batchTokenTransfer(address[] memory _userAddr,  uint256[] memory _amount) public  onlyOwner {
@@ -22,7 +22,7 @@ contract Nxt {
         require(_amount >= address(this).balance, "Not enough nestcoin to send");
         for (uint256 i = 0; i < _userAddr.length; i++) {
             if(address(_userAddr[i] != address(0))){
-                nestcoin.transfer(userAddr[i], _amount[i]);
+                nestcoin.transfer(_userAddr[i], _amount[i]);
             }
         }
     }   
