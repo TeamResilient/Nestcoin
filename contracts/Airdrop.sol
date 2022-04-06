@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract NestcoinReward is ERC20  {
-    mapping(address=>uint256) private allocatedQuotas;
+    //track admin
     mapping(address=>bool) private admins;
-    address[] private loyalCustomers;
+    
  
 
     //modifiers
@@ -17,46 +17,31 @@ contract NestcoinReward is ERC20  {
     }
     //events
     event AssignedAdmin(address newAdmin);
+    event DispatchRewards(string message);
 
 
     constructor() ERC20("Nestcoin","NTC"){
         _mint(msg.sender,1000000 *10**18);
         admins[msg.sender]=true;
     }
-    function mintToken(address _to, uint256 amount)  public {
-        _mint(_to,amount);
-    }
+  
     //add address as admin
-    function assignAdmin (address _newAdmin) public isAdmin(msg.sender) returns(bool){
+    function assignAdmin (address _newAdmin) public isAdmin(msg.sender) {
         admins[_newAdmin]= true;
         emit AssignedAdmin(_newAdmin);
-        return true;
     }
     //distribute rewards to eligible customers
-    function distributeRewards () public isAdmin(msg.sender) returns(bool){
+    function dispatchRewards (address[] calldata _addrs, uint256[] calldata _rewards) public isAdmin(msg.sender){
         //loop through the loyal customers and map rewards from the allocatedQuotas
-        for(uint32 customer = 0;customer <= loyalCustomers.length;customer ++){
-            _mint(allocatedQuotas[loyalCustomers[customer][0]],allocatedQuotas[loyalCustomers[customer][1]]);
-            delete loyalCustomers[customer];
+        address[] memory addrs= _addrs;
+        uint256[] memory rewards = _rewards ;
+        require(addrs.length == rewards.length ,"Array Lengths must be equal.");
+        for(uint32 customer = 0;customer <= addrs.length;customer ++){
+            _mint(addrs[customer],rewards[customer]);
         }
-        return true;
+        emit DispatchRewards("Rewards Successfully dispatched!");
     }
-    //add to pool of loyal customers 
-    function addToPool(address _customer,uint256 reward) public isAdmin(msg.sender) returns(bool){
-        //add qualified customer to pool
-        loyalCustomers.push([_customer,reward]);
-        return true;
-    }
-    function loadAllocatedQuotas(address[] calldata _addr) external isAdmin(msg.sender){
-        //array structure [[address,allocation],[address,allocation],[address,allocation]]
-        loyalCustomers = _addr;
-        for (uint32 count =0;count <=_addr.length;count++){
-            allocatedQuotas[_addr[i][0]]= _addr[i][1];
-        }
-    }
-    function viewLoyalCustomers() public view returns(address[] memory){
-        return loyalCustomers;
-    }
+  
   
 }
 
