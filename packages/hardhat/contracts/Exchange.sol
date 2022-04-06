@@ -9,6 +9,8 @@ import "./Nestcoin.sol";
 contract Nxt {
     NestCoin public nestcoin;
 
+    event Payment(address indexed payer, uint amount, string indexed ref);
+
     constructor(address tokenAddr) {
         nestcoin = NestCoin(tokenAddr);
     }
@@ -19,5 +21,16 @@ contract Nxt {
             transferFrom(owner, _userAddr[i], _amount[i]);
         }
     }   
+
+    // with a ref, every payment is traceable to the value provided
+    function pay(uint amountOfTokens, string ref) public {
+
+        // Transfer token 
+        nestcoin.transferFrom(msg.sender, address(this), amountOfTokens);
+
+        // Emit Pay event
+        emit Payment(msg.sender, amountOfTokens, ref);
+
+    }
 }
  
