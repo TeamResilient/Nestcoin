@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -5,19 +7,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
+  console.log("\n 🏵  Deploying Nestcoin...\n");
 
-  await deploy("NestCoin", {
+  await deploy("Nestcoin", {
     from: deployer,
     log: true,
   });
-  
-  const nestcoin = await ethers.getContract("NestCoin", deployer);
 
-  
+  console.log("\n    ✅ confirming...\n");
+
+  const nestcoin = await ethers.getContract("Nestcoin", deployer);
 };
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-module.exports.tags = ["Exchange"];
+module.exports.tags = ["Nestcoin"];
