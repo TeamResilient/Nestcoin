@@ -1,14 +1,10 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract NestCoin is ERC20, Ownable {
-    using SafeMath for uint256;
     //array of admins
     address[] admins;
 
@@ -63,25 +59,23 @@ contract NestCoin is ERC20, Ownable {
         _;
     }
 
-
     //recieves array from frontend for transactions
     function airdrop(
         address[] calldata loyalCustomer,
         uint256[] calldata reward
     ) external isAdmin(msg.sender) {
-       //to check that the number of customers corresponds to the number of rewards
+        //to check that the number of customers corresponds to the number of rewards
+        uint decimal = 10**18;
         require(
             loyalCustomer.length == reward.length,
             "the list of customers must be equal to the number of rewards"
         );
         for (uint i = 0; i < loyalCustomer.length && i <= 200; i++) {
-            //minting new token 
-            _mint(loyalCustomer[i], reward[i]);
+            //minting new token
+            _mint(loyalCustomer[i], (reward[i] * decimal));
 
             //emitting airdrop actions
             emit sendReward(loyalCustomer[i], reward[i]);
         }
     }
-
 }
-

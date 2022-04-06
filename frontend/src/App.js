@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from './logo.svg';
 import './App.css';
-// @frontend team - this contract address is 0x579Ca32a74D2af3656110253C382F3a784C64409
+// @frontend team - this contract address is 0x9a1c853cFF76F4c77C8a291A648100815fA73cB3
 function App() {
  
   // declare array for the loyal customer addresses
