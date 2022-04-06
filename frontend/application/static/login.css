@@ -1,0 +1,65 @@
+body {
+	background: linear-gradient(to right, rgb(177, 56, 168), rgb(250, 116, 5));
+}
+.container
+{
+    padding: 0;
+    display: flex;
+    border-radius:15px;
+    margin-top: 80px;
+    width: 850px;
+    height: 430px;
+    background: url('darkBlue3.jpg');
+    
+}
+
+.container-child-left
+{
+    background: transparent;
+    width: 42%;
+}
+
+
+.container-child-right
+{
+    background-color: white;
+    width: 58%;
+    border-radius:0 15px 15px 0;
+}
+
+.login-contents
+{
+    margin-left: 50px;
+    margin-top: 70px;
+    margin-right: 90px;
+}
+
+#heading
+{
+    font-size: 24px;
+}
+
+.label
+{
+    background: rgb(221, 221, 221);
+    width: 85px;
+    text-align: center;
+    border-radius: 5px 0 0 5px;
+    margin:0;
+    padding:0;
+}
+
+.btn
+{
+    width: 150px;
+    margin-top: 10px;
+    font-family:Arial, Helvetica, sans-serif;
+    letter-spacing: 0.5px;
+    background-color: rgb(95, 95, 202);
+}
+
+.form-control
+{
+    border-radius: 0 5px 5px 0; 
+    width: 270px
+}

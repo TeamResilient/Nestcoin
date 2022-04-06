@@ -1,0 +1,198 @@
+{% extends 'basic.html'%}
+{%block title%}Upload Data {%endblock%}
+{% block body %}
+<style>
+
+    .pform {
+        width: 70%;
+
+    }
+
+    .bell {
+        position: fixed;
+        top: 1vw;
+        right: 1vw;
+    }
+
+    #form_button {
+        background-color: #109CF1;
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 15px;
+        padding-right: 25px;
+        padding-left: 25px;
+        cursor: pointer;
+        border-radius: 10px;
+        font-family: 'Poppins';
+    }
+</style>
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+        <div class="flex">
+
+            <div class="subpbody">
+                <div class=" bg-blue-50 flex  ">
+
+
+
+                    <div class="mx-4 flex-grow" style = "margin-top: 20px;">
+
+                        <div class=" flex flex-wrap ">
+                            <div class=" bg-white max-w-4xl rounded-lg w-screen shadow-md">
+                                <div>
+                                    <div class="py-3 pl-6 font-medium text-xl border-b-2 font-semibold">Upload user data </div>
+                                    <br>
+                                    <p class=" font-small text-xl ml-5 "
+                                        style="font-size: 17px;color:rgb(109, 109, 109)">Add a CSV file with columns as
+                                        Name, Email, Contract Address, etc. </p>
+
+                                    <br>
+
+                                    <div class="pform ml-5">
+                                        <form action="{{url_for('upload_csv')}}" method="POST" enctype="multipart/form-data">
+                                            
+                                            <label for="file1" style="font-weight: 400;font-size: 18px;">Upload a
+                                                file</label><br>
+                                            <hr style="margin-bottom: 15px;">
+                                               <p><input type="file" name="file" accept=".csv" required></p>
+                                            
+                                            <small style="color: red;">* Only accepts CSV files</small>
+
+
+
+                                            <div class="submit mt-6 p-1 ">
+                                                <input type="submit" value="Submit" id="form_button" />
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <br>
+                                    <br>
+
+
+                                    <div class="  w-80 border-gray-400 rounded mx-4 m-{5}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+{%endblock%}
+{% block script %}
+<script>
+    const btn = document.querySelector(".mobile");
+    const sidebar = document.querySelector(".navbar");
+    const arrow = document.querySelector(".side");
+    const middle = document.querySelector(".Middle");
+    // const alcher = document.querySelector(".Alcher");
+    const ak = document.querySelector(".ak");
+
+    if (screen.width < 672) {
+        alert('Less than 960');
+        ak.classList.add("hidden")
+
+    }
+
+    // alcher.addEventListener("click", () => {
+    //     sidebar.classList.toggle("-translate-x-full"),
+    //         middle.classList.add("sm:mx-96"),
+    //         btn.classList.add("invisible")
+    // });
+    arrow.addEventListener("click", () => {
+        middle.classList.remove("sm:mx-96")
+        sidebar.classList.toggle("-translate-x-full"),
+            btn.classList.remove("invisible")
+    })
+
+
+
+    const levelPoints = [185, 14];
+    document.getElementById('level-value').innerText = levelPoints[0]
+
+    // class initialization(myChat)
+    var levelChart = new Chart(document.getElementById('level-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: levelPoints,
+                backgroundColor: [
+                    'rgba(232, 107, 115, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+
+
+    const tasksCompletedPoints = [23, 5];
+    document.getElementById('tasks-completed-value').innerText = tasksCompletedPoints[0]
+
+    // class initialization(myChat)
+    var tasksCompletedChart = new Chart(document.getElementById('tasks-completed-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: tasksCompletedPoints,
+                backgroundColor: [
+                    'rgba(0, 201, 92, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+
+
+
+    const referralsPoints = [56, 3];
+    document.getElementById('referrals-value').innerText = referralsPoints[0]
+
+    // class initialization(myChat)
+    var referralsChart = new Chart(document.getElementById('referrals-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: referralsPoints,
+                backgroundColor: [
+                    'rgba(255, 161, 51, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+</script>
+
+{% endblock %}

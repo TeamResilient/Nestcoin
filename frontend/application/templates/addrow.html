@@ -1,0 +1,130 @@
+{% extends 'basic.html'%}
+{%block title%}Event-based triggers {%endblock%}
+{%block style%}
+<style>
+    .subideabody {
+        font-family: 'Poppins';
+        background-color: #f8f8f8;
+    }
+
+    .sform {
+        width: 70%;
+    }
+
+
+    .bell {
+        position: fixed;
+        top: 1vw;
+        right: 1vw;
+    }
+
+    #form_button {
+        background-color: #109CF1;
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 15px;
+        padding-right: 25px;
+        padding-left: 25px;
+        cursor: pointer;
+        border-radius: 10px;
+        font-family: 'Poppins';
+    }
+
+    input[type=text] {
+        border: none;
+        background-color: transparent;
+        resize: none;
+        outline: none;
+    }
+
+    input[type=textarea] {
+        outline: none;
+    }
+</style>
+{%endblock%}
+{% block body %}
+
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+        <div class="flex">
+            <div>
+                <style>
+                    .form-input {
+                        border: none;
+                        background-color: transparent;
+                        width: 580px;
+                        outline: none;
+                    }
+                </style>
+                <div class="subideabody" style="font-family: 'Roboto';">
+                    <div class=" bg-blue-50 flex  ">
+
+                        <div class="mx-4 flex-grow">
+
+                            <br>
+                            <div class=" flex flex-wrap ">
+                                <div class=" bg-white max-w-4xl rounded-lg w-screen shadow-md">
+                                    <div>
+                                        <div class="py-3 pl-6 font-medium text-xl border-b-2 font-semibold">Add a row </div>
+                                        <br>
+
+
+                                        <div class="sform">
+                                            <form action="#" method="post" id="idea_form" width:50%>
+                                                {{ form.hidden_tag() }}
+                                                <div class="subject m-5 my-8 text-m border-b-2 border-gray-300">
+                                                    <label for="subject"></label>
+                                                    {{ form.name(class="form-control") }}
+
+                                                </div>
+                                                <div class="subject m-5 my-8 text-m border-b-2 border-gray-300">
+                                                    <label for="subject"></label>
+                                                    {{ form.email(class="form-control") }}
+
+                                                </div>
+                                                <div class="subject m-5 my-8 text-m border-b-2 border-gray-300">
+                                                    <label for="subject"></label>
+                                                    {{ form.address(class="form-control") }}
+
+                                                </div>
+                                                <div class="subject m-5 my-8 text-m border-b-2 border-gray-300">
+                                                    <label for="subject"></label>
+                                                    {{ form.amount(class="form-control") }}
+
+                                                </div>
+                                                
+                                                
+
+
+
+                                                <div class="submit m-4 mx-6 p-1 ">
+                                                    <input type="submit" value="Submit" id="form_button" />
+                                                </div>
+                                        </div>
+
+                                        <br>
+                                        <br>
+
+
+                                        <div class="  w-80 border-gray-400 rounded mx-4 m-{5}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+{%endblock%}
+{% block script %}
+
+{% endblock %}

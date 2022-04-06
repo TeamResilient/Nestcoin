@@ -1,0 +1,185 @@
+{% extends 'basic.html'%}
+{%block title%}Upload Data {%endblock%}
+{% block body %}
+<style>
+
+    .pform {
+        width: 70%;
+
+    }
+
+    .bell {
+        position: fixed;
+        top: 1vw;
+        right: 1vw;
+    }
+
+    #form_button {
+        background-color: #109CF1;
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 15px;
+        padding-right: 25px;
+        padding-left: 25px;
+        cursor: pointer;
+        border-radius: 10px;
+        font-family: 'Poppins';
+    }
+    .custom-btn {
+        width: 230px;
+        height: 140px;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px 25px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 500;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+         box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+         7px 7px 20px 0px rgba(0,0,0,.1),
+         4px 4px 5px 0px rgba(0,0,0,.1);
+        outline: none;
+      }
+      .btn-3 {
+        background: rgb(0,172,238);
+      background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
+        width: 130px;
+        height: 40px;
+        line-height: 42px;
+        padding: 0;
+        border: none;
+        
+      }
+      .btn-3 span {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .btn-3:before,
+      .btn-3:after {
+        position: absolute;
+        content: "";
+        right: 0;
+        top: 0;
+         background: rgba(2,126,251,1);
+        transition: all 0.3s ease;
+      }
+      .btn-3:before {
+        height: 0%;
+        width: 2px;
+      }
+      .btn-3:after {
+        width: 0%;
+        height: 2px;
+      }
+      .btn-3:hover{
+         background: transparent;
+        box-shadow: none;
+      }
+      .btn-3:hover:before {
+        height: 100%;
+      }
+      .btn-3:hover:after {
+        width: 100%;
+      }
+      .btn-3 span:hover{
+         color: rgba(2,126,251,1);
+      }
+      .btn-3 span:before,
+      .btn-3 span:after {
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: 0;
+         background: rgba(2,126,251,1);
+        transition: all 0.3s ease;
+      }
+      .btn-3 span:before {
+        width: 2px;
+        height: 0%;
+      }
+      .btn-3 span:after {
+        width: 0%;
+        height: 2px;
+      }
+      .btn-3 span:hover:before {
+        height: 100%;
+      }
+      .btn-3 span:hover:after {
+        width: 100%;
+      }
+      .dimsplay {
+          display: none;
+        font-size: 17px;
+        margin-left: 20px;
+        margin-top: 15px;
+    }
+</style>
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+        <div class="flex">
+
+            <div class="subpbody">
+                <div class=" bg-blue-50 flex  ">
+
+                    <div class="mx-4 flex-grow" style = "margin-top: 20px;">
+
+                        <div class=" flex flex-wrap ">
+                            <div class=" bg-white max-w-4xl rounded-lg w-screen shadow-md">
+                                <div>
+                                    <div class="py-3 pl-6 font-medium text-xl border-b-2 font-semibold">Share Rewards </div>
+
+                                    <table id = "history" class="table table-striped"><!-- 
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Body</th>
+                                            <th>Date</th>
+                                        </tr> -->
+                                        {% for data in data %}
+                                            <tr>
+                                                <td>{{data.name}}</td>
+                                                <td>{{data.email}}</td>
+                                                <td>{{data.address}}</td>
+                                                {% if data.amount=="" %}
+                                                <td>1</td>
+                                                {% else %}
+                                                <td>{{data.amount}}</td>
+                                                {% endif %}
+                                            </tr>
+                                            
+                                        {% endfor %}
+                                    </table>
+
+                                    <div class="mb-5 ml-5">
+                                        <a href = "{{ url_for('addrow') }}"><button class = "btn btn-primary">Add a row</button></a>
+                                        {% if data %}
+                                        <a href = "{{ url_for('cleartable') }}"><button class = "btn btn-danger">Clear all</button></a>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-5 ml-5">
+                                    <button class="custom-btn btn-3"><span>Send Rewards</span></button>
+                                </div>
+
+                                    <div class="  w-80 border-gray-400 rounded mx-4 m-{5}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+{%endblock%}
