@@ -1,0 +1,64 @@
+<!-- left_nav-small_screens -->
+
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Balsamiq Sans' rel='stylesheet'>
+</head>
+<nav class="hidden sm:block bg-white h-screen w-80 border-gray-400 rounded">
+    <div class=" mt-3 flex flex-col justify-center bg-white w-80 border-gray-400 rounded shadow-md px-12">
+        <center><span style="font-family:'Balsamiq Sans' ;font-size: 24px;font-weight: 300;background: linear-gradient(to right,rgb(255, 145, 0), rgb(204, 68, 147),rgb(150, 6, 90),rgb(31, 1, 163));-webkit-background-clip: text;background-clip:transparent;
+                -webkit-text-fill-color: transparent;"><b>NESTCOIN</b></span><BR>
+            <div style="font-size: 7px;font-weight:500px;letter-spacing: 1px;transform: translate(0,-5px);">You Dream, We Create</div>
+        </center>
+
+        <div class="elements pt-2 mt-2 mb-28 flex flex-col justify-center">
+            <a href="{{ url_for('home') }}"
+                class="rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+                <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/dashboard.png')}}" />
+                <p class="pl-4 no-underline">Dashboard</p>
+            </a>
+
+            <a href="{{ url_for('data') }}"
+                class="rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+                <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/upload.png')}}" />
+                <p class="pl-4 no-underline">Upload Data</p>
+            </a>
+
+            <a href="{{ url_for('wallet') }}"
+            class="rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+            <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/wallet.png')}}" />
+            <p class="pl-4 no-underline">Connect Wallet</p>
+
+            <a href="{{ url_for('rewards') }}"
+            class="rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+            <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/gift.png')}}" />
+            <p class="pl-4 no-underline">Share Rewards</p>
+            </a>
+
+            <a href="{{ url_for('custom') }}"
+            class="rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+                <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/bell.png')}}" />
+                <p class="pl-4 no-underline">Custom Triggers</p>
+            </a>
+         </a>
+            <!-- <a href="{{ url_for('rewards') }}"
+                class="rounded-full flex flex-nowrap py-4 w-60 pl-6 hover:border-0 hover:bg-gray-100 mb-3 hover:no-underline"
+                style="cursor:pointer;">
+                {% if heading == "rewards" %}
+                <img src="{{url_for('static',filename='icons/submission-active.png')}}" />
+                {% else %}
+                <img src="{{url_for('static',filename='icons/submission.png')}}" />
+                {% endif %}
+                <p class="pl-4 no-underline">Share Rewards</p>
+            </a> -->
+            <hr>
+
+            <hr class="border bg-gray-200" />
+            <a href="{{ url_for('logout') }}"
+                class="side rounded-full flex flex-nowrap py-3 pl-6 w-60 hover:border-0 hover:bg-gray-100 hover:no-underline">
+                <img style="max-width: 13%; height: auto;" src="{{url_for('static',filename='icons/logout.png')}}" />
+                <p class="pl-4 no-underline">Logout</p>
+            </a>
+
+        </div>
+    </div>
+</nav>
