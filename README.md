@@ -40,7 +40,7 @@ Interestingly they began accepting crypto-based payments a year ealiers and woul
 
 | <b><u>Stack</u></b>          | <b><u>Usage</u></b>   |
 | :--------------------------- | :-------------------- |
-| **`Solidity`**             | Programming language. |
+| **`Solidity`**             | Smart contract |
 | **`React JS`**               | Frontend              |
 
 
@@ -70,14 +70,14 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 - Node JS
 #
 > ## Setting up the project
-\*Note:
+### \*Note:
 
 - This project was setup on a windows 10 system using the gitbash terminal. Some of the commands used may not work with the VScode terminal, command prompt or powershell.
 
 - The steps involved are outlined below:-
 #
 
-### Hardhat setup for backend
+### Hardhat setup
 
 
 - first steps involve cloning and installing hardhat
