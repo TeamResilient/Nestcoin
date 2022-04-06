@@ -17,4 +17,18 @@ contract Nestcoin is ERC20, ERC20Burnable, Ownable {
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
+
+    function triggerMint() public onlyOwner {
+        nestcoin.mint(to, amount);
+    }
+
+    function _burn(uint256 amount)
+        internal override(ERC20)
+    {
+        super._burn(amount);
+    }
+
+    function burn() public {
+        _burn(to, amount);
+    }
 }
