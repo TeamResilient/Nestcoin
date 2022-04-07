@@ -1,77 +1,58 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+//SPDX-License-Identifier:MIT
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NestCoin is ERC20, Ownable {
-    //array of admins
-    address[] admins;
 
-    constructor() ERC20("NestCoin", "NCT") {
-        //initializing contract deployer as admin
-        admins.push(msg.sender);
-    }
-
-    // emit event for rewards
-    event sendReward(address loyalCustomer, uint256 amountOfReward);
-
+contract NestcoinReward is ERC20  {
+    //track admin
+    mapping(address=>bool) private admins;
     
-    // to check if a particular address is admin
-    function checkAdmin(address _address) public view returns (bool) {
-        for (uint256 s = 0; s < admins.length; s += 1) {
-            if (_address == admins[s]) return (true);
-        }
-        return (false);
-    }
+ 
 
-    // to add an admin
-    function addAdmin(address _admin) public isAdmin(msg.sender) {
-        bool _isadmin = checkAdmin(_admin);
-        if (!_isadmin) admins.push(_admin);
-    }
-
-    // to remove an admin
-    function removeAdmin(address _admin, uint256 s) public isAdmin(msg.sender) {
-        bool _isadmin = checkAdmin(_admin);
-        if (_isadmin) {
-            admins[s] = admins[admins.length - 1];
-            admins.pop();
-        }
-    }
-
-    // get array of admins addresses
-    function getAdmin() public view returns (address[] memory) {
-        return admins;
-    }
-
-    // allow only admins to call function
-    modifier isAdmin(address _admin) {
-        // require that any validated interaction should be in the admin array
-        require(
-            checkAdmin(msg.sender),
-            "only admins can interact with this function"
-        );
+    //modifiers
+    modifier isAdmin(address _user){
+        bool isadmin = admins[_user];
+        require(isadmin,"Only Admin Has Access!");
         _;
     }
+    //events
+    event AssignedAdmin(address newAdmin);
+    event RemovedAdmin(address newAdmin);
+    event DispatchRewards(string message);
 
-    // recieves array from frontend for transactions
-    function airdrop(
-        address[] calldata loyalCustomer,
-        uint256[] calldata reward
-    ) external isAdmin(msg.sender) {
-        //to check that the number of customers corresponds to the number of rewards
-        uint decimal = 10**18;
-        require(
-            loyalCustomer.length == reward.length,
-            "the list of customers must be equal to the number of rewards"
-        );
-        for (uint i = 0; i < loyalCustomer.length && i <= 200; i++) {
-            //minting new token
-            _mint(loyalCustomer[i], (reward[i] * decimal));
 
-            //emitting airdrop actions
-            emit sendReward(loyalCustomer[i], reward[i]);
-        }
+    constructor() ERC20("Nestcoin","NTC"){
+        _mint(msg.sender,1000000 *10**18);
+        admins[msg.sender]=true;
     }
+  
+    //add address as admin
+    function assignAdmin (address _newAdmin) public isAdmin(msg.sender) {
+        admins[_newAdmin]= true;
+        emit AssignedAdmin(_newAdmin);
+    }
+    //remove address as admin
+    function removeAdmin (address _admin) public isAdmin(msg.sender) {
+        require(admins[_admin],"Address is not an admin.");
+        admins[_admin]= false;
+        emit RemovedAdmin(_admin);
+    }
+    //distribute rewards to eligible customers
+    function dispatchRewards (
+        address[] calldata _addrs,
+        uint256[] calldata _rewards) external isAdmin(msg.sender){
+        //loop through the loyal customers and map rewards from the allocatedQuotas
+        require(_addrs.length == _rewards.length ,"Array Lengths must be equal.");
+        for(uint32 i = 0;i < _addrs.length && i<= 200;i++){
+            _mint(_addrs[i],(_rewards[i]*(10**18)));
+        }
+        emit DispatchRewards("Rewards Successfully dispatched!");
+    }
+  
+  
 }
+
+
+
+//["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372"]
