@@ -8,7 +8,9 @@
 - [Repo Setup](#repo-setup)
 - [Requirements](#requirements)
 - [Setting up the project](#setting-up-the-project)
-  - [Hardhat setup for backend](#hardhat-setup-for-backend)
+  - [Install hardhat](#install-hardhat)
+  - [Env setup](#env-setup)
+  - [Setup hardhat.config](#setup-hardhatconfig)
   - [Compile](#compile)
   - [Deploy](#deploy)
   - [Verify](#verify)
@@ -77,10 +79,10 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 - The steps involved are outlined below:-
 #
 
-### Hardhat setup
+> ### Install hardhat
 
 
-- first steps involve cloning and installing hardhat
+The first step involves cloning and installing hardhat.
 ```shell
 $ git clone https://github.com/TeamResilient/Nestcoin.git
 
@@ -94,24 +96,60 @@ $ yarn install
 
 $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@nomiclabs/hardhat-ethers" "ethers" "web3" "@nomiclabs/hardhat-web3" "@nomiclabs/hardhat-etherscan" "@openzeppelin/contracts" "dotenv"
 ```
-- setup an .env file by using the sample.env 
+> ### Env setup
+Next create a '.env' file by using the sample.env. Retrieve your information from the relevant sites and input the information where needed in the .env file.
 
-- retrieve alchemy, metamask & etherscan keys and setup hardhat.config
+`To retrieve your metamask private key.`
+
+- Open your account details by clicking on the three dots on the metamask extension on your chrome browser
+- Click on export private key
+- Verify your password
+- Copy your private key and place it in the .env file
+
+![metamask](https://drive.google.com/uc?export=view&id=1oDl0IbicD7LhNOcYUbGzBYTJdduWim1t)
 #
-### Compile
+`To retrieve your alchemy key.`
+- Login to your account on https://www.alchemy.com/
+- Once youre redirected to your [dashboard](https://dashboard.alchemyapi.io/), click on create app.
+- Fill in the relevant details especially the chain and network
+- Once the app has been created, click on view key.
+- Copy the HTTP and place it in the .env file.
+
+![alchemy](https://drive.google.com/uc?export=view&id=1XFtACFN-LWvoDUD1QyJJY9uOc7KNkrL6)
+
+#    
+    
+`To retrieve your etherscan key.`
+
+
+- Login to [etherscan](https://etherscan.io/) and hover over the dropdown arrow for your profile on the navbar.
+- Click on API keys and add to create a new project (optional step).
+- Once the project has been created, click on the copy button to copy the API key.
+- Paste it in the .env file
+
+![etherscan](https://drive.google.com/uc?export=view&id=1Gq-hPuwjwb3TOCH2dqUA93VxfyrbUDN6)
+#
+
+> ### Setup hardhat.config
+Below is the setup for the hardhat.config.json
+
+
+![hardhat](https://drive.google.com/uc?export=view&id=1Wmc2o2DnF5K6Q5y0CTCjVUfUIoLVm2ei)
+#
+> ### Compile
 - compile the smartcontract before deployment: 
 ```
 $ npx hardhat compile
 ```
 #
-### Deploy
-- To deploy: 
+> ### Deploy
+- To deploy the smartcontract: 
 ```
 $ npx hardhat run scripts/deploy.js --network rinkeby
 ```
 #
-### Verify
-- To verify smartcontract: 
+> ### Verify
+- To verify the smartcontract: 
 ```
 $ npx hardhat verify DEPLOYED_ADDRESS --network rinkeby
 ```
