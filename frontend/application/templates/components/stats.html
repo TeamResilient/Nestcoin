@@ -1,0 +1,31 @@
+<div class=" flex flex-col md:flex-row my-2 md:space-x-4" style = "margin: 25px;">
+    <div class=" bg-white rounded-md shadow-md-1 my-2">
+        <div class="py-3 pl-6 font-medium text-lg border-b-2">Overview</div>
+        <div class=" flex justify-center w-full min-w-x">
+            <div class=" py-4 px-10">
+                <div class=" w-40 h-40">
+                    <div style="margin: 50px 58px;" class=" absolute">
+                        <svg width="46" height="44" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M34.3234 4.34916H28.9342V2.59267C28.9342 2.12682 28.7449 1.68005 28.408 1.35064C28.0711 1.02124 27.6142 0.836182 27.1378 0.836182H9.17369C8.69725 0.836182 8.24033 1.02124 7.90344 1.35064C7.56654 1.68005 7.37728 2.12682 7.37728 2.59267V4.34916H1.98806C1.51162 4.34916 1.0547 4.53421 0.717806 4.86362C0.380914 5.19303 0.19165 5.63979 0.19165 6.10564V11.3751C0.19165 18.9456 3.42518 23.5124 8.85033 23.6705C9.6419 25.0089 10.7249 26.1606 12.0226 27.0439C13.3203 27.9273 14.8009 28.5206 16.3593 28.7819V32.453H12.7665V35.9659H23.5449V32.453H19.9521V28.7819C21.5106 28.5206 22.9911 27.9273 24.2888 27.0439C25.5865 26.1606 26.6695 25.0089 27.4611 23.6705C32.8503 23.4949 36.1198 18.928 36.1198 11.3751V6.10564C36.1198 5.63979 35.9305 5.19303 35.5936 4.86362C35.2568 4.53421 34.7998 4.34916 34.3234 4.34916ZM3.78447 11.3751V7.86213H7.37728V19.8589C4.17967 18.5416 3.78447 13.6585 3.78447 11.3751ZM28.9342 19.8589V7.86213H32.527V11.3751C32.527 13.6585 32.1318 18.5416 28.9342 19.8589Z"
+                                fill="#334D6E" />
+                        </svg>
+                    </div>
+                    <div id="level-value" style="margin: 100px 65px;" class="absolute font-medium text-xl ">NaN</div>
+                    <canvas id="level-pie"></canvas>
+                </div>
+                <div class=" my-2">
+                    <div class=" text-gray-600 text-xl font-medium text-center">Notifications</div>
+                    <div class=" text-gray-600 text-center whitespace-nowrap">{{notif}} notifications sent</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" bg-white rounded-md my-2 mr-5 w-full">
+        <div class="py-3 pl-6 font-medium text-lg border-b-2">Last 5 days' activity</div>
+        <div class=" rounded-lg overflow-hidden">
+            <canvas class="p-10 " id="chartLine"></canvas>
+          </div>
+    </div>
+    
+</div>

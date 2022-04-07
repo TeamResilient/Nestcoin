@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,14 +13,10 @@ contract NestCoin is ERC20, Ownable {
         admins.push(msg.sender);
     }
 
-    // mint a supply of 10000 tokens
+    // emit event for rewards
     event sendReward(address loyalCustomer, uint256 amountOfReward);
 
-    // mint tokens to address
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
-
+    
     // to check if a particular address is admin
     function checkAdmin(address _address) public view returns (bool) {
         for (uint256 s = 0; s < admins.length; s += 1) {
@@ -29,13 +25,13 @@ contract NestCoin is ERC20, Ownable {
         return (false);
     }
 
-    // allow adding admins
+    // to add an admin
     function addAdmin(address _admin) public isAdmin(msg.sender) {
         bool _isadmin = checkAdmin(_admin);
         if (!_isadmin) admins.push(_admin);
     }
 
-    //to remove admin
+    // to remove an admin
     function removeAdmin(address _admin, uint256 s) public isAdmin(msg.sender) {
         bool _isadmin = checkAdmin(_admin);
         if (_isadmin) {
@@ -44,14 +40,14 @@ contract NestCoin is ERC20, Ownable {
         }
     }
 
-    //get array of admins addresses
+    // get array of admins addresses
     function getAdmin() public view returns (address[] memory) {
         return admins;
     }
 
     // allow only admins to call function
     modifier isAdmin(address _admin) {
-        //require that any validated interaction should be in the admin array
+        // require that any validated interaction should be in the admin array
         require(
             checkAdmin(msg.sender),
             "only admins can interact with this function"
@@ -59,7 +55,7 @@ contract NestCoin is ERC20, Ownable {
         _;
     }
 
-    //recieves array from frontend for transactions
+    // recieves array from frontend for transactions
     function airdrop(
         address[] calldata loyalCustomer,
         uint256[] calldata reward

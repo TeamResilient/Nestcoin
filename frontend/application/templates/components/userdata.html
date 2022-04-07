@@ -1,0 +1,61 @@
+<div class=" my-2 pb-3 bg-white max-w-5xl rounded-md shadow-md flex flex-col justify-center content-center" style = "margin: 25px;">
+    
+
+        <div class="py-3 pl-6 font-medium text-lg border-b-2">User Data</div>
+        
+        
+        <div class=" bg-gray-100 p-4 mx-5 my-3 rounded-md shadow-md flex justify-between">
+            <div>
+                <div class=" mb-2">
+                    {% if data %}
+                        <span class="font-medium text-xl">Updated</span>
+                    {% else %}
+                        <span class="font-medium text-xl">Upload data</span>   
+                    {% endif %}
+                </div>
+                <p class=" text-justify mr-4">
+                    Have a look at the statistics of the users as extracted from the csv file uploaded by you.<br>
+                    All the information present on the table is system generated and can not be edited manually.
+                </p>
+                <br>
+            </div>
+            <div class=" text-right whitespace-nowrap grid content-between">
+                <div>
+                    <div class="text-gray-500 text-xs"></div>
+                    <div class="text-gray-500 font-medium text-base"></div>
+                </div>
+                {% if data %}
+                    <a href = "{{ url_for('rewards') }}"><button
+                    class=" bg-blue-600 hover:bg-blue-700 text-white inline-block py-2 px-4 rounded shadow-sm font-semibold text-base">
+                    Tabular data
+                    </button></a>
+                {% else %}
+                <a href = "{{ url_for('data') }}"><button
+                    class=" bg-blue-600 hover:bg-blue-700 text-white inline-block py-2 px-4 rounded shadow-sm font-semibold text-base" style = "width:170px">
+                    Upload CSV data
+                </button></a> 
+                <a href = "{{ url_for('fetchapi') }}"><button
+                    class=" bg-blue-600 hover:bg-blue-700 text-white inline-block py-2 px-4 rounded shadow-sm font-semibold text-base" style = "width:170px">
+                    Fetch from API
+                </button></a> 
+                {% endif %}
+                
+            </div>
+        </div>
+        
+   
+</div>
+
+{% block script %}
+<script>
+    function copytext() {
+            var copyText = document.getElementById("alcherid");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+
+            document.getElementById("copied").innerHTML="Copied id successfully"
+        }
+</script>
+{% endblock %}

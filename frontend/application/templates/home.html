@@ -1,0 +1,197 @@
+
+{% extends 'basic.html'%}
+{%block title%}Home {%endblock%}
+{% block body %}
+
+<body>
+    <div class="bg-blue-50 flex">
+        {% include "navbar.html" %}
+            <div class="flex">
+                <div>
+                    {% include "components/stats.html" %}
+                    {% include "components/userdata.html" %}
+                    {% include "components/platforms.html" %}
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</body>
+{%endblock%}
+{% block script %}
+<script>
+    const labels = [
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        
+    ];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Notifications',
+            backgroundColor: 'green',
+            borderColor: 'green',
+            borderWidth:"5",
+            data: [{{notifdays.day1}}, {{notifdays.day2}}, {{notifdays.day3}}, {{notifdays.day4}}, {{notifdays.day5}}, 25],
+        },
+        ]
+    };
+    const configLineChart = {
+        type: 'line',
+        data,
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        color: "rgb(173, 173, 173)",
+                        tickColor: 'white',
+                        
+                    }
+                },
+                y: {
+                    grid: {
+                        color: "rgb(173, 173, 173)",
+                        tickColor: 'white',
+                    },
+                    max: 30,
+                    ticks: {
+                        // forces step size to be 50 units
+                        stepSize: 10
+                    }
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                    labels: {
+                        // This more specific font property overrides the global property
+                        color: "white",
+                        font: {
+                            size: 18 // 'size' now within object 'font {}'
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    var chartLine = new Chart(
+        document.getElementById('chartLine'),
+        configLineChart
+    );
+    const btn = document.querySelector(".mobile");
+    const sidebar = document.querySelector(".navbar");
+    const arrow = document.querySelector(".side");
+    const middle = document.querySelector(".Middle");
+    // const alcher = document.querySelector(".Alcher");
+    const ak = document.querySelector(".ak");
+
+    if (screen.width < 672) {
+        alert('Less than 960');
+        ak.classList.add("hidden")
+
+    }
+
+    // alcher.addEventListener("click", () => {
+    //     sidebar.classList.toggle("-translate-x-full"),
+    //         middle.classList.add("sm:mx-96"),
+    //         btn.classList.add("invisible")
+    // });
+    arrow.addEventListener("click", () => {
+        middle.classList.remove("sm:mx-96")
+        sidebar.classList.toggle("-translate-x-full"),
+            btn.classList.remove("invisible")
+    })
+
+
+
+    const levelPoints = [{{notif}}, 14];
+    if({{notif}}<10)
+        document.getElementById('level-value').innerText = '00'+levelPoints[0];
+    else if({{notif}}<100)
+        document.getElementById('level-value').innerText = '0'+levelPoints[0]
+    else
+        document.getElementById('level-value').innerText = '0'+levelPoints[0]
+    // class initialization(myChat)
+    var levelChart = new Chart(document.getElementById('level-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: levelPoints,
+                backgroundColor: [
+                    'rgba(232, 107, 115, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+
+
+    const tasksCompletedPoints = [23, 5];
+    document.getElementById('tasks-completed-value').innerText = tasksCompletedPoints[0]
+
+    // class initialization(myChat)
+    var tasksCompletedChart = new Chart(document.getElementById('tasks-completed-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: tasksCompletedPoints,
+                backgroundColor: [
+                    'rgba(0, 201, 92, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+
+
+
+    const referralsPoints = [56, 3];
+    document.getElementById('referrals-value').innerText = referralsPoints[0]
+
+    // class initialization(myChat)
+    var referralsChart = new Chart(document.getElementById('referrals-pie').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: referralsPoints,
+                backgroundColor: [
+                    'rgba(255, 161, 51, 1)',
+                    'rgba(243, 246, 248, 1)'
+                ],
+                borderWidth: 0,
+                cutout: 62,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: false,
+                tooltip: false,
+            }
+        }
+    });
+</script>
+
+{% endblock %}
