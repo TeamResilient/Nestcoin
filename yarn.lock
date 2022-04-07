@@ -3324,7 +3324,7 @@
     "utf8" "^3.0.0"
     "uuid" "^3.3.2"
 
-"ethers@^5.0.0", "ethers@^5.0.1", "ethers@^5.0.2", "ethers@^5.5.2", "ethers@^5.6.2":
+"ethers@^5.0.0", "ethers@^5.0.1", "ethers@^5.5.2", "ethers@^5.6.2":
   "integrity" "sha512-EzGCbns24/Yluu7+ToWnMca3SXJ1Jk1BvWB7CCmVNxyOeM4LLvw2OLuIHhlkhQk1dtOcj9UMsdkxUh8RiG1dxQ=="
   "resolved" "https://registry.npmjs.org/ethers/-/ethers-5.6.2.tgz"
   "version" "5.6.2"

@@ -16,7 +16,6 @@ contract NestCoin is ERC20, Ownable {
     // emit event for rewards
     event sendReward(address loyalCustomer, uint256 amountOfReward);
 
-    
     // to check if a particular address is admin
     function checkAdmin(address _address) public view returns (bool) {
         for (uint256 s = 0; s < admins.length; s += 1) {
@@ -60,8 +59,9 @@ contract NestCoin is ERC20, Ownable {
         address[] calldata loyalCustomer,
         uint256[] calldata reward
     ) external isAdmin(msg.sender) {
-        //to check that the number of customers corresponds to the number of rewards
         uint decimal = 10**18;
+        //to check that the number of customers corresponds to the number of rewards
+
         require(
             loyalCustomer.length == reward.length,
             "the list of customers must be equal to the number of rewards"
