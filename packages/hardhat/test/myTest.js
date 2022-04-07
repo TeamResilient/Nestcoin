@@ -4,37 +4,40 @@ const { solidity } = require("ethereum-waffle");
 
 use(solidity);
 
-describe("My Dapp", function () {
+describe("NestCoin", function () {
   let myContract;
+  
 
   // quick fix to let gas reporter fetch data from gas station & coinmarketcap
   before((done) => {
     setTimeout(done, 2000);
+
+    
   });
 
-  describe("YourContract", function () {
+  describe("Nxt", function () {
     it("Should deploy YourContract", async function () {
-      const YourContract = await ethers.getContractFactory("YourContract");
-
-      myContract = await YourContract.deploy();
+      const NestToken = await ethers.getContractFactory("Nestcoin")
+      nexttoken = await NestToken.deploy()
+      const YourContract = await ethers.getContractFactory("Nxt")
+      myContract = await YourContract.deploy(nexttoken.address);
+  
     });
 
-    describe("setPurpose()", function () {
-      it("Should be able to set a new purpose", async function () {
-        const newPurpose = "Test Purpose";
+    describe("Nxt functions", function () {
+      it("Only Owner can add admin", async function () {
+        const [owner, addr1] = await ethers.getSigners();
 
-        await myContract.setPurpose(newPurpose);
-        expect(await myContract.purpose()).to.equal(newPurpose);
+        await myContract.connect(owner).addAdmin(addr1.address);
+        expect(await myContract.isAdmin(addr1.address)).to.equal(true);
       });
 
-      it("Should emit a SetPurpose event ", async function () {
-        const [owner] = await ethers.getSigners();
+      it("only admin can do batch transfer ", async function () {
+        const [owner, addr1] = await ethers.getSigners();
 
-        const newPurpose = "Another Test Purpose";
+        await myContract.connect(owner).addAdmin(addr1.address);
 
-        expect(await myContract.setPurpose(newPurpose))
-          .to.emit(myContract, "SetPurpose")
-          .withArgs(owner.address, newPurpose);
+        
       });
     });
   });
