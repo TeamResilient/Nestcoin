@@ -4,7 +4,7 @@ const{ethers} = require("hardhat");
 async function main(){
      /*
   A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
-  so whitelistContract here is a factory for instances of our Whitelist contract.
+  so NestcoinContract here is a factory for instances of our Nestcoin contract.
   */
     const NestcoinContract = await ethers.getContractFactory("NestCoin");
 
