@@ -14,6 +14,7 @@
   - [Compile](#compile)
   - [Deploy](#deploy)
   - [Verify](#verify)
+  - [Test](#test)
 - [Verified Contract Address](#verified-contract-address)
 
 #
@@ -178,8 +179,16 @@ $ npx hardhat run scripts/deploy.js --network rinkeby
 $ npx hardhat verify DEPLOYED_ADDRESS --network rinkeby
 ```
 
-#
 
-> ## Verified Contract Address:
->
-> https://rinkeby.etherscan.io/address/0x9DC7331249dd5E9474E9da1d747537D0075561Ba#code
+#
+> ### Test
+- To test the smartcontract: 
+```
+$ npx hardhat test  --network rinkeby
+```
+
+#
+> ## Verified Contract Address: 
+https://rinkeby.etherscan.io/address/0x9DC7331249dd5E9474E9da1d747537D0075561Ba#code
+
+

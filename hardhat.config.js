@@ -3,11 +3,21 @@ require("@nomiclabs/hardhat-etherscan");
 const dotenv = require("dotenv");
 
 dotenv.config();
+const defaultNetwork = "localhost";
+
 
 module.exports = {
   solidity: "0.8.10",
-  defaultNetwork: "rinkeby",
+  defaultNetwork,
   networks: {
+    localhost: {
+      url: "http://localhost:8545",
+      /*      
+        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
+        (you can put in a mnemonic here to set the deployer locally)
+      
+      */
+    },
     rinkeby: {
       url: process.env.ALCHEMY_API_URL,
       accounts: [process.env.METAMASK_KEY],
