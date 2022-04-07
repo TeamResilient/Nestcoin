@@ -30,7 +30,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   console.log("\n    ✅ confirming...\n");
 
-  await ownershipTransaction.wait();
+  console.log("\n 🏵  Transfering ownership of Nxt to admin...\n");
+
+  // Transfer ownership of Nxt to Admin
+  const ownershipTransaction2 = await nxt.transferOwnership(
+    "** YOUR FRONTEND ADDRESS **"
+  );
+
+  console.log("\n    ✅ confirming...\n");
+
+  await ownershipTransaction2.wait();
 };
 
 module.exports.tags = ["Nxt"];
