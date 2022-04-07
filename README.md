@@ -62,9 +62,7 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 </p>
 
     $ git remote add upstream https://github.com/TeamResilient/Nestcoin.git
-
 #
-
 > ## Requirements
 
 #

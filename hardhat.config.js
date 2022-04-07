@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-etherscan");
 const dotenv = require("dotenv");
 
 dotenv.config();
-const defaultNetwork = "localhost";
+const defaultNetwork = "rinkeby";
 
 
 module.exports = {
