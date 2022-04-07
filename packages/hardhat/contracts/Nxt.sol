@@ -27,7 +27,7 @@ contract Nxt is Ownable {
             nestcoin.transfer(_userAddr[i], _amount[i]);
         }
 
-        emit BatchTransfer(totalAmount, msg.sender);
+        emit BatchTransfer(msg.sender, totalAmount);
     }   
 
     // with a ref, every payment is traceable to the value provided
@@ -52,7 +52,6 @@ contract Nxt is Ownable {
     function isAdmin(address user) public view returns (bool){
         return admins[user];
     }
-
 
     modifier onlyAdmin() {
         require(admins[msg.sender], "Not admin");
