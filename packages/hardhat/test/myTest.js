@@ -32,13 +32,13 @@ describe("NestCoin", function () {
         expect(await myContract.isAdmin(addr1.address)).to.equal(true);
       });
 
-      // it("only admin can do batch transfer ", async function () {
-      //   const [owner, addr1] = await ethers.getSigners();
-
-      //   await myContract.connect(owner).addAdmin(addr1.address);
-
-        
-      // });
+      it("only admin can do batch transfer ", async function () {
+        const [owner, addr1, addr2] = await ethers.getSigners();
+        await myContract.connect(owner).addAdmin(addr1.address);
+       await expect(myContract.connect(addr2).batchTokenTransfer(
+          ["0x6BB12976bdaE76f22D6FFFBD5D1c0125dD566936","0xe75B467b5623Bf0C07cb3C0D585083C383fCD28F"], 
+          ["10", "20"], "1000000000000000")).to.be.revertedWith("Not admin");
+      });
     });
   });
 });
