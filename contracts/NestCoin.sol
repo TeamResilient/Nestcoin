@@ -16,11 +16,7 @@ contract NestCoin is ERC20, Ownable {
     // emit event for rewards
     event sendReward(address loyalCustomer, uint256 amountOfReward);
 
-    // mint tokens to address
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
-
+    
     // to check if a particular address is admin
     function checkAdmin(address _address) public view returns (bool) {
         for (uint256 s = 0; s < admins.length; s += 1) {
