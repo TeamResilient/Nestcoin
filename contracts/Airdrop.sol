@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+
 contract NestcoinReward is ERC20  {
     //track admin
     mapping(address=>bool) private admins;
@@ -17,6 +18,7 @@ contract NestcoinReward is ERC20  {
     }
     //events
     event AssignedAdmin(address newAdmin);
+    event RemovedAdmin(address newAdmin);
     event DispatchRewards(string message);
 
 
@@ -30,14 +32,20 @@ contract NestcoinReward is ERC20  {
         admins[_newAdmin]= true;
         emit AssignedAdmin(_newAdmin);
     }
+    //remove address as admin
+    function removeAdmin (address _admin) public isAdmin(msg.sender) {
+        require(admins[_admin],"Address is not an admin.");
+        admins[_admin]= false;
+        emit RemovedAdmin(_admin);
+    }
     //distribute rewards to eligible customers
-    function dispatchRewards (address[] calldata _addrs, uint256[] calldata _rewards) public isAdmin(msg.sender){
+    function dispatchRewards (
+        address[] calldata _addrs,
+        uint256[] calldata _rewards) external isAdmin(msg.sender){
         //loop through the loyal customers and map rewards from the allocatedQuotas
-        address[] memory addrs= _addrs;
-        uint256[] memory rewards = _rewards ;
-        require(addrs.length == rewards.length ,"Array Lengths must be equal.");
-        for(uint32 customer = 0;customer <= addrs.length;customer ++){
-            _mint(addrs[customer],rewards[customer]);
+        require(_addrs.length == _rewards.length ,"Array Lengths must be equal.");
+        for(uint32 i = 0;i < _addrs.length && i<= 200;i++){
+            _mint(_addrs[i],(_rewards[i]*(10**18)));
         }
         emit DispatchRewards("Rewards Successfully dispatched!");
     }
