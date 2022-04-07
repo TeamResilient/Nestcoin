@@ -29,8 +29,6 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import uniqid from "uniqid";
 import * as XLSX from "xlsx";
-const csv = require("csv-parser");
-const fs = require("fs");
 
 const formatDate = epochTime => {
   const date = new Date(epochTime * 1000);
