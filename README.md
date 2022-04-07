@@ -30,7 +30,7 @@ Interestingly they began accepting crypto-based payments a year ealiers and woul
 
 > ## Project Features
 >
-- Batch transfer rewards to a miximum of 200 addresses.
+- Batch transfer rewards to a maximum of 200 addresses.
 
 - Distribute currency as quickly and effeciently as possible
 
