@@ -2,22 +2,23 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol"; 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Nestcoin.sol";
 
 
 contract Nxt is Ownable {
     Nestcoin public nestcoin;
 
+    mapping(address => bool) private admins;
+
     event Payment(address indexed payer, uint amount, bytes32 indexed ref, uint time);
-    event BatchTransfer(uint amount, address indexed adminAddress);
+    event BatchTransfer(address indexed adminAddress, uint amount);
 
     constructor(address tokenAddr) {
         nestcoin = Nestcoin(tokenAddr);
     }
 
-     function batchTokenTransfer(address[] memory _userAddr,  uint256[] memory _amount, uint256 totalAmount) public  onlyOwner {
+     function batchTokenTransfer(address[] memory _userAddr,  uint256[] memory _amount, uint256 totalAmount) public  onlyAdmin {
         require(_userAddr.length == _amount.length, "Number of Addresses must match amount");
         require(_userAddr.length <= 200, "Array must not be greater than 200");
 
@@ -38,6 +39,24 @@ contract Nxt is Ownable {
         // Emit Pay event
         emit Payment(msg.sender, amountOfTokens, ref, block.timestamp);
 
+    }
+
+    function addAdmin(address admin) public onlyOwner {
+        admins[admin] = true;
+    }
+
+    function removeAdmin(address admin) public onlyOwner {
+        admins[admin] = false;
+    }
+
+    function isAdmin(address user) public view returns (bool){
+        return admins[user];
+    }
+
+
+    modifier onlyAdmin() {
+        require(admins[msg.sender], "Not admin");
+        _;
     }
 }
  

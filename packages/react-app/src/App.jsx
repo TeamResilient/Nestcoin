@@ -1,6 +1,6 @@
 import Portis from "@portis/web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { Upload, Alert, Button, Card, Col, Divider, Input, List, Menu, Row, Modal } from "antd";
+import { Upload, Alert, Button, Card, Col, Divider, Input, List, Menu, Row, message } from "antd";
 import "antd/dist/antd.css";
 import Authereum from "authereum";
 import {
@@ -20,18 +20,7 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import WalletLink from "walletlink";
 import Web3Modal from "web3modal";
 import "./App.css";
-import {
-  Account,
-  Address,
-  AddressInput,
-  Balance,
-  Contract,
-  Faucet,
-  GasGauge,
-  Header,
-  Ramp,
-  ThemeSwitch,
-} from "./components";
+import { Account, Address, Balance, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 
@@ -39,9 +28,9 @@ import { Transactor } from "./helpers";
 import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import uniqid from "uniqid";
+import * as XLSX from "xlsx";
 const csv = require("csv-parser");
 const fs = require("fs");
-import * as XLSX from "xlsx";
 
 const formatDate = epochTime => {
   const date = new Date(epochTime * 1000);
@@ -508,6 +497,7 @@ function App(props) {
     valid: false,
     value: "",
   });
+  const [paymentRef, setPaymentRef] = useState("");
   const [isPaymentAmountApproved, setIsPaymentAmountApproved] = useState();
 
   useEffect(() => {
@@ -533,34 +523,13 @@ function App(props) {
 
   const [tokenTransfering, setTokenTransfering] = useState();
   const [paying, setPaying] = useState();
+  const [editingAccess, setEditingAccess] = useState();
 
   const [addresses, setAddresses] = useState([]);
   const [amounts, setAmounts] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  const state = {
-    previewVisible: false,
-    previewImage: "",
-    previewTitle: "",
-    fileList: [],
-  };
-
-  const [customers, setCustomers] = useState(state);
-
-  const handleCancel = () => setCustomers({ previewVisible: false });
-
-  const handlePreview = async file => {
-    if (!file.url && !file.preview) {
-      // eslint-disable-next-line no-param-reassign
-      file.preview = await getBase64(file.originFileObj);
-    }
-
-    setCustomers({
-      previewImage: file.url || file.preview,
-      previewVisible: true,
-      previewTitle: file.name || file.url.substring(file.url.lastIndexOf("/") + 1),
-    });
-  };
+  const [customersCsvFile, setCustomersCsvFile] = useState([]);
 
   const processData = dataString => {
     const dataStringLines = dataString.split(/\r\n|\n/);
@@ -595,8 +564,9 @@ function App(props) {
         }
       }
     }
-    if (csvAddresses.length > 200 || csvAddresses.length !== csvAmounts.length) {
-      alert("You have more than 200. It should be atmost 200 per batch");
+    if (csvAddresses.length > 200) {
+      message.info("You have more than 200. It should be atmost 200 per batch");
+      setCustomersCsvFile([]);
       return;
     }
 
@@ -606,7 +576,7 @@ function App(props) {
   };
 
   const handleChange = ({ fileList }) => {
-    setCustomers({ fileList });
+    setCustomersCsvFile(fileList);
 
     // Parse through CSV files
     if (fileList.length === 0) {
@@ -634,13 +604,16 @@ function App(props) {
   };
 
   const [addressToCheckBalance, setAddressToCheckBalance] = useState("");
+  const [addressToEditAccess, setAddressToEditAccess] = useState("");
+  const [isAddressAdmin, setIsAddressAdmin] = useState("");
+
   const [balanceCheckAmount, setBalanceCheckAmount] = useState(0);
 
   const handleCheckBalance = async () => {
-    if(addressToCheckBalance){
+    if (addressToCheckBalance) {
       setBalanceCheckAmount(await tx(readContracts.Nestcoin.balanceOf(addressToCheckBalance)));
     }
-  }
+  };
 
   return (
     <div className="App">
@@ -669,6 +642,16 @@ function App(props) {
               Customer Portal
             </Link>
           </Menu.Item>
+          <Menu.Item key="/access">
+            <Link
+              onClick={() => {
+                setRoute("/access");
+              }}
+              to="/access"
+            >
+              Access Control
+            </Link>
+          </Menu.Item>
         </Menu>
 
         <Switch>
@@ -681,13 +664,12 @@ function App(props) {
                     accept=".csv,.xlsx,.xls"
                     action="#"
                     listType="picture-card"
-                    fileList={customers.fileList}
-                    onPreview={handlePreview}
+                    fileList={customersCsvFile}
                     onChange={handleChange}
                     beforeUpload={() => false}
                     maxCount={1}
                   >
-                    {customers.fileList.length === 0 && (
+                    {customersCsvFile.length === 0 && (
                       <div>
                         <div style={{ marginTop: 8 }}>Upload csv</div>
                       </div>
@@ -706,7 +688,7 @@ function App(props) {
                       setTokenBuyAmount(buyAmount);
                     }}
                   /> */}
-                  <Balance balance={totalAmount} />
+                  <Balance balance={totalAmount} /> NTK <div>{totalAmount ? `to ${addresses.length} loyal customers` : ''}</div>
                 </div>
 
                 <div style={{ padding: 8 }}>
@@ -717,8 +699,9 @@ function App(props) {
                       setTokenTransfering(true);
                       await tx(writeContracts.Nxt.batchTokenTransfer(addresses, amounts, totalAmount));
                       setTokenTransfering(false);
+                      setCustomersCsvFile([]);
                     }}
-                    disabled={customers.fileList.length === 0}
+                    disabled={customersCsvFile.length === 0}
                   >
                     Send Tokens
                   </Button>
@@ -728,7 +711,7 @@ function App(props) {
 
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Total Supply:</div>
-              <Balance balance={nestcoinTotalSupply} fontSize={64} />
+              <Balance balance={nestcoinTotalSupply} fontSize={64} /> NTK
             </div>
             <div style={{ padding: 8 }}>
               <div>Nestcoin Exchange Balance:</div>
@@ -748,7 +731,7 @@ function App(props) {
                       setAddressToCheckBalance(e.target.value);
                     }}
                   />
-                  <Balance balance={balanceCheckAmount} />
+                  <Balance balance={balanceCheckAmount} /> NTK
                 </div>
 
                 <div style={{ padding: 8 }}>
@@ -764,7 +747,6 @@ function App(props) {
               </Card>
             </div>
 
-
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
               <div>Batch Transfer Events:</div>
               <List
@@ -772,9 +754,10 @@ function App(props) {
                 renderItem={item => {
                   return (
                     <List.Item key={item.blockNumber + item.blockHash}>
-                      <Address value={item.args[1]} ensProvider={mainnetProvider} fontSize={16} />
-                      Batch transfered ====
-                      <Balance balance={item.args[0]} />
+                      <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} />
+                      &nbsp;&nbsp;
+                      Batch transfered &nbsp;&nbsp;
+                      <Balance balance={item.args[1]} />
                       NKT
                     </List.Item>
                   );
@@ -793,13 +776,17 @@ function App(props) {
                     value={paymentAmount.value}
                     onChange={e => {
                       const newValue = e.target.value.startsWith(".") ? "0." : e.target.value;
-                      const sellAmount = {
+                      const payAmount = {
                         value: newValue,
                         valid: /^\d*\.?\d+$/.test(newValue),
                       };
-                      setPaymentAmount(sellAmount);
+                      setPaymentAmount(payAmount);
+                      setPaymentRef(uniqid())
                     }}
                   />
+                </div>
+                <div style={{ padding: 8 }}>
+                  <Input type="text" style={{ textAlign: "center" }} placeholder={"Ref"} value={paymentRef} disabled/>
                 </div>
                 {isPaymentAmountApproved ? (
                   <div style={{ padding: 8 }}>
@@ -814,7 +801,7 @@ function App(props) {
                         await tx(
                           writeContracts.Nxt.pay(
                             paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
-                            ethers.utils.formatBytes32String(uniqid()),
+                            ethers.utils.formatBytes32String(paymentRef),
                           ),
                         );
                         setPaying(false);
@@ -859,7 +846,7 @@ function App(props) {
 
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Your Nestcoin Balance:</div>
-              <Balance balance={yourNestcoinBalance} fontSize={64} />
+              <Balance balance={yourNestcoinBalance} fontSize={64} /> NTK
             </div>
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
               <div>Payment Events:</div>
@@ -869,15 +856,76 @@ function App(props) {
                   return (
                     <List.Item key={item.blockNumber + item.blockHash}>
                       <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} />
-                      &nbsp;&nbsp;
+                      &nbsp;
                       <Balance balance={item.args[1]} />
-                      NKT &nbsp;&nbsp;
-                      <span>ref({ethers.utils.parseBytes32String(item.args[2])})</span> &nbsp;&nbsp;
-                      <span>date({formatDate(item.args[3])})</span>
+                      NKT &nbsp;
+                      <span>R({ethers.utils.parseBytes32String(item.args[2])})</span> &nbsp;&nbsp;
+                      <span>T({formatDate(item.args[3])})</span>
                     </List.Item>
                   );
                 }}
               />
+            </div>
+          </Route>
+          <Route exact path="/access">
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
+              <Card title="Grant/Revoke Admin Access">
+                <div style={{ padding: 8 }}>
+                  <Input
+                    type="text"
+                    style={{ textAlign: "center" }}
+                    placeholder={"Address"}
+                    value={addressToEditAccess}
+                    onChange={async e => {
+                      setAddressToEditAccess(e.target.value);
+                      setIsAddressAdmin(await tx(readContracts.Nxt.isAdmin(e.target.value)));
+                    }}
+                  />
+                </div>
+
+                {isAddressAdmin ? (
+                  <div style={{ padding: 8 }}>
+                    <Button disabled={true} type={"primary"}>
+                      Grant
+                    </Button>
+                    <Button
+                      type={"primary"}
+                      loading={editingAccess}
+                      onClick={async () => {
+                        setEditingAccess(true);
+                        await tx(writeContracts.Nxt.removeAdmin(addressToEditAccess));
+                        message.info("You are no longer Admin");
+                        setEditingAccess(false);
+                        setAddressToEditAccess("");
+                      }}
+                      disabled={!addressToEditAccess}
+                    >
+                      Revoke
+                    </Button>
+                  </div>
+                ) : (
+                  <div style={{ padding: 8 }}>
+                    <Button
+                      type={"primary"}
+                      loading={editingAccess}
+                      onClick={async () => {
+                        setEditingAccess(true);
+                        await tx(writeContracts.Nxt.addAdmin(addressToEditAccess));
+                        message.info("You are now an Admin");
+                        setEditingAccess(false);
+                        setAddressToEditAccess("");
+                      }}
+                      disabled={!addressToEditAccess}
+                    >
+                      Grant
+                    </Button>
+                    <Button disabled={true} type={"primary"}>
+                      Revoke
+                    </Button>
+                  </div>
+                )}
+              </Card>
             </div>
           </Route>
         </Switch>
