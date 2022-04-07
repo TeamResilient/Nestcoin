@@ -182,7 +182,7 @@ $ npx hardhat verify DEPLOYED_ADDRESS --network rinkeby
 > ### Test
 - To test the smartcontract: 
 ```
-$ npx hardhat test  --network rinkeby
+$ npx hardhat test --network localhost
 ```
 
 #
