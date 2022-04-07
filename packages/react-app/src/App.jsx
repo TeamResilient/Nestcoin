@@ -1,5 +1,8 @@
-import { Button, Col, Menu, Row } from "antd";
+import Portis from "@portis/web3";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { Upload, Alert, Button, Card, Col, Divider, Input, List, Menu, Row, Modal } from "antd";
 import "antd/dist/antd.css";
+import Authereum from "authereum";
 import {
   useBalance,
   useContractLoader,
@@ -9,41 +12,56 @@ import {
   useUserProviderAndSigner,
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
+import { useEventListener } from "eth-hooks/events/useEventListener";
+import Fortmatic from "fortmatic";
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, Route, Switch, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+//import Torus from "@toruslabs/torus-embed"
+import WalletLink from "walletlink";
+import Web3Modal from "web3modal";
 import "./App.css";
 import {
   Account,
+  Address,
+  AddressInput,
+  Balance,
   Contract,
   Faucet,
   GasGauge,
   Header,
   Ramp,
   ThemeSwitch,
-  NetworkDisplay,
-  FaucetHint,
-  NetworkSwitch,
 } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
-import externalContracts from "./contracts/external_contracts";
+import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
+import { Transactor } from "./helpers";
+
 // contracts
+import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
-import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph, AdminAccess, CustomerAccess } from "./views";
-import { useStaticJsonRPC } from "./hooks";
+import uniqid from "uniqid";
+const csv = require("csv-parser");
+const fs = require("fs");
+import * as XLSX from "xlsx";
+
+const formatDate = epochTime => {
+  const date = new Date(epochTime * 1000);
+  const dateArray = date.toString().split(" ");
+
+  return `${dateArray[1]} ${dateArray[2]}, ${dateArray[3]}. ${dateArray[4]}`;
+};
 
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-eth !
 
     Code:
-    https://github.com/scaffold-eth/scaffold-eth
+    https://github.com/austintgriffith/scaffold-eth
 
     Support:
     https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA
     or DM @austingriffith on twitter or telegram
 
-    You should get your own Alchemy.com & Infura.io ID and put it in `constants.js`
+    You should get your own Infura.io ID and put it in `constants.js`
     (this is your connection to the main Ethereum network for ENS etc.)
 
 
@@ -53,48 +71,129 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
 const NETWORKCHECK = true;
-const USE_BURNER_WALLET = true; // toggle burner wallet feature
-const USE_NETWORK_SELECTOR = false;
-
-const web3Modal = Web3ModalSetup();
 
 // 🛰 providers
-const providers = [
-  "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
-  `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-  "https://rpc.scaffoldeth.io:48544",
-];
+if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
+// const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
+// const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
+//
+// attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
+// Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
+const scaffoldEthProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544")
+  : null;
+const poktMainnetProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider(
+      "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+    )
+  : null;
+const mainnetInfura = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID)
+  : null;
+// ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_ID
+
+// 🏠 Your local provider is usually pointed at your local blockchain
+const localProviderUrl = targetNetwork.rpcUrl;
+// as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
+const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
+if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
+const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
+
+// 🔭 block explorer URL
+const blockExplorer = targetNetwork.blockExplorer;
+
+// Coinbase walletLink init
+const walletLink = new WalletLink({
+  appName: "coinbase",
+});
+
+// WalletLink provider
+const walletLinkProvider = walletLink.makeWeb3Provider(`https://mainnet.infura.io/v3/${INFURA_ID}`, 1);
+
+// Portis ID: 6255fb2b-58c8-433b-a2c9-62098c05ddc9
+/*
+  Web3 modal helps us "connect" external wallets:
+*/
+const web3Modal = new Web3Modal({
+  network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
+  cacheProvider: true, // optional
+  theme: "light", // optional. Change to "dark" for a dark theme.
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        bridge: "https://polygon.bridge.walletconnect.org",
+        infuraId: INFURA_ID,
+        rpc: {
+          1: `https://mainnet.infura.io/v3/${INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
+          42: `https://kovan.infura.io/v3/${INFURA_ID}`,
+          100: "https://dai.poa.network", // xDai
+        },
+      },
+    },
+    portis: {
+      display: {
+        logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
+        name: "Portis",
+        description: "Connect to Portis App",
+      },
+      package: Portis,
+      options: {
+        id: "6255fb2b-58c8-433b-a2c9-62098c05ddc9",
+      },
+    },
+    fortmatic: {
+      package: Fortmatic, // required
+      options: {
+        key: "pk_live_5A7C91B2FC585A17", // required
+      },
+    },
+    // torus: {
+    //   package: Torus,
+    //   options: {
+    //     networkParams: {
+    //       host: "https://localhost:8545", // optional
+    //       chainId: 1337, // optional
+    //       networkId: 1337 // optional
+    //     },
+    //     config: {
+    //       buildEnv: "development" // optional
+    //     },
+    //   },
+    // },
+    "custom-walletlink": {
+      display: {
+        logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
+        name: "Coinbase",
+        description: "Connect to Coinbase Wallet (not Coinbase App)",
+      },
+      package: walletLinkProvider,
+      connector: async (provider, _options) => {
+        await provider.enable();
+        return provider;
+      },
+    },
+    authereum: {
+      package: Authereum, // required
+    },
+  },
+});
 
 function App(props) {
-  // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
-  // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
+  const mainnetProvider =
+    poktMainnetProvider && poktMainnetProvider._isProvider
+      ? poktMainnetProvider
+      : scaffoldEthProvider && scaffoldEthProvider._network
+      ? scaffoldEthProvider
+      : mainnetInfura;
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
-  const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
-
-  const targetNetwork = NETWORKS[selectedNetwork];
-
-  // 🔭 block explorer URL
-  const blockExplorer = targetNetwork.blockExplorer;
-
-  // load all your providers
-  const localProvider = useStaticJsonRPC([
-    process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : targetNetwork.rpcUrl,
-  ]);
-  const mainnetProvider = useStaticJsonRPC(providers);
-
-  if (DEBUG) console.log(`Using ${selectedNetwork} network`);
-
-  // 🛰 providers
-  if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -112,7 +211,7 @@ function App(props) {
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider, USE_BURNER_WALLET);
+  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
   const userSigner = userProviderAndSigner.signer;
 
   useEffect(() => {
@@ -135,13 +234,14 @@ function App(props) {
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userSigner, gasPrice);
 
+  // Faucet Tx can be used to send funds from the faucet
+  const faucetTx = Transactor(localProvider, gasPrice);
+
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
   // Just plug in different 🛰 providers to get your balance on different chains:
   const yourMainnetBalance = useBalance(mainnetProvider, address);
-
-  // const contractConfig = useContractConfig();
 
   const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
 
@@ -166,8 +266,44 @@ function App(props) {
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]);
 
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const nxtAddress = readContracts && readContracts.Nxt && readContracts.Nxt.address;
+
+  const nxtETHBalance = useBalance(localProvider, nxtAddress);
+  if (DEBUG) console.log("💵 nxtETHBalance", nxtETHBalance ? ethers.utils.formatEther(nxtETHBalance) : "...");
+
+  const nxtApproval = useContractReader(readContracts, "Nestcoin", "allowance", [address, nxtAddress]);
+  console.log("🤏 nxtApproval", nxtApproval);
+
+  const nestcoinTotalSupply = useContractReader(readContracts, "Nestcoin", "totalSupply", []);
+  console.log("🏵 nestcoinTotalSupply:", nestcoinTotalSupply ? ethers.utils.formatEther(nestcoinTotalSupply) : "...");
+
+  const nxtTokenBalance = useContractReader(readContracts, "Nestcoin", "balanceOf", [nxtAddress]);
+  console.log("🏵 nxtTokenBalance:", nxtTokenBalance ? ethers.utils.formatEther(nxtTokenBalance) : "...");
+
+  const yourNestcoinBalance = useContractReader(readContracts, "Nestcoin", "balanceOf", [address]);
+  console.log("🏵 yourTokenBalance:", yourNestcoinBalance ? ethers.utils.formatEther(yourNestcoinBalance) : "...");
+
+  const tokensPerEth = useContractReader(readContracts, "Nxt", "tokensPerEth");
+  console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
+
+  // const complete = useContractReader(readContracts,"ExampleExternalContract", "completed")
+  // console.log("✅ complete:",complete)
+  //
+  // const exampleExternalContractBalance = useBalance(localProvider, readContracts && readContracts.ExampleExternalContract.address);
+  // if(DEBUG) console.log("💵 exampleExternalContractBalance", exampleExternalContractBalance )
+
+  // let completeDisplay = ""
+  // if(false){
+  //   completeDisplay = (
+  //     <div style={{padding:64, backgroundColor:"#eeffef", fontWeight:"bolder"}}>
+  //       🚀 🎖 👩‍🚀  -  Staking App triggered `ExampleExternalContract` -- 🎉  🍾   🎊
+  //       <Balance
+  //         balance={0}
+  //         fontSize={64}
+  //       /> ETH staked!
+  //     </div>
+  //   )
+  // }
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -210,9 +346,92 @@ function App(props) {
     readContracts,
     writeContracts,
     mainnetContracts,
-    localChainId,
-    myMainnetDAIBalance,
   ]);
+
+  let networkDisplay = "";
+  if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+    if (selectedChainId === 1337 && localChainId === 31337) {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network ID"
+            description={
+              <div>
+                You have <b>chain id 1337</b> for localhost and you need to change it to <b>31337</b> to work with
+                HardHat.
+                <div>(MetaMask -&gt; Settings -&gt; Networks -&gt; Chain ID -&gt; 31337)</div>
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    } else {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network"
+            description={
+              <div>
+                You have <b>{networkSelected && networkSelected.name}</b> selected and you need to be on{" "}
+                <Button
+                  onClick={async () => {
+                    const ethereum = window.ethereum;
+                    const data = [
+                      {
+                        chainId: "0x" + targetNetwork.chainId.toString(16),
+                        chainName: targetNetwork.name,
+                        nativeCurrency: targetNetwork.nativeCurrency,
+                        rpcUrls: [targetNetwork.rpcUrl],
+                        blockExplorerUrls: [targetNetwork.blockExplorer],
+                      },
+                    ];
+                    console.log("data", data);
+
+                    let switchTx;
+                    // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                    try {
+                      switchTx = await ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: data[0].chainId }],
+                      });
+                    } catch (switchError) {
+                      // not checking specific error code, because maybe we're not using MetaMask
+                      try {
+                        switchTx = await ethereum.request({
+                          method: "wallet_addEthereumChain",
+                          params: data,
+                        });
+                      } catch (addError) {
+                        // handle "add" error
+                      }
+                    }
+
+                    if (switchTx) {
+                      console.log(switchTx);
+                    }
+                  }}
+                >
+                  <b>{networkLocal && networkLocal.name}</b>
+                </Button>
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    }
+  } else {
+    networkDisplay = (
+      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
+        {targetNetwork.name}
+      </div>
+    );
+  }
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -233,7 +452,6 @@ function App(props) {
       console.log(code, reason);
       logoutOfWeb3Modal();
     });
-    // eslint-disable-next-line
   }, [setInjectedProvider]);
 
   useEffect(() => {
@@ -242,179 +460,445 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
+  const [route, setRoute] = useState();
+  useEffect(() => {
+    setRoute(window.location.pathname);
+  }, [setRoute]);
+
+  let faucetHint = "";
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+
+  const [faucetClicked, setFaucetClicked] = useState(false);
+  if (
+    !faucetClicked &&
+    localProvider &&
+    localProvider._network &&
+    localProvider._network.chainId === 31337 &&
+    yourLocalBalance &&
+    ethers.utils.formatEther(yourLocalBalance) <= 0
+  ) {
+    faucetHint = (
+      <div style={{ padding: 16 }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            faucetTx({
+              to: address,
+              value: ethers.utils.parseEther("1"),
+            });
+            setFaucetClicked(true);
+          }}
+        >
+          💰 Grab funds from the faucet ⛽️
+        </Button>
+      </div>
+    );
+  }
+
+  const batchTransferEvents = useEventListener(readContracts, "Nxt", "BatchTransfer", localProvider, 1);
+  const paymentEvents = useEventListener(readContracts, "Nxt", "Payment", localProvider, 1);
+
+  console.log("📟 batchTransferEvents:", batchTransferEvents);
+
+  const [tokenBuyAmount, setTokenBuyAmount] = useState({
+    valid: false,
+    value: "",
+  });
+  const [paymentAmount, setPaymentAmount] = useState({
+    valid: false,
+    value: "",
+  });
+  const [isPaymentAmountApproved, setIsPaymentAmountApproved] = useState();
+
+  useEffect(() => {
+    console.log("paymentAmount", paymentAmount.value);
+    const paymentAmountBN = paymentAmount.valid ? ethers.utils.parseEther("" + paymentAmount.value) : 0;
+    console.log("paymentAmountBN", paymentAmountBN);
+    setIsPaymentAmountApproved(nxtApproval && paymentAmount.value && nxtApproval.gte(paymentAmountBN));
+  }, [paymentAmount, readContracts]);
+  console.log("isPaymentAmountApproved", isPaymentAmountApproved);
+
+  const ethCostToPurchaseTokens =
+    tokenBuyAmount.valid &&
+    tokensPerEth &&
+    ethers.utils.parseEther("" + tokenBuyAmount.value / parseFloat(tokensPerEth));
+  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+
+  const ethValueToSellTokens =
+    paymentAmount.valid && tokensPerEth && ethers.utils.parseEther("" + paymentAmount.value / parseFloat(tokensPerEth));
+  console.log("ethValueToSellTokens:", ethValueToSellTokens);
+
+  const [tokenSendToAddress, setTokenSendToAddress] = useState();
+  const [tokenSendAmount, setTokenSendAmount] = useState();
+
+  const [tokenTransfering, setTokenTransfering] = useState();
+  const [paying, setPaying] = useState();
+
+  const [addresses, setAddresses] = useState([]);
+  const [amounts, setAmounts] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const state = {
+    previewVisible: false,
+    previewImage: "",
+    previewTitle: "",
+    fileList: [],
+  };
+
+  const [customers, setCustomers] = useState(state);
+
+  const handleCancel = () => setCustomers({ previewVisible: false });
+
+  const handlePreview = async file => {
+    if (!file.url && !file.preview) {
+      // eslint-disable-next-line no-param-reassign
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setCustomers({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf("/") + 1),
+    });
+  };
+
+  const processData = dataString => {
+    const dataStringLines = dataString.split(/\r\n|\n/);
+    const headers = dataStringLines[0].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
+
+    // const list = [];
+    const csvAddresses = [];
+    const csvAmounts = [];
+    let csvTotals = 0;
+    for (let i = 1; i < dataStringLines.length; i++) {
+      const row = dataStringLines[i].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
+      if (headers && row.length == headers.length) {
+        const obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          let d = row[j];
+          if (d.length > 0) {
+            if (d[0] == '"') d = d.substring(1, d.length - 1);
+            if (d[d.length - 1] == '"') d = d.substring(d.length - 2, 1);
+          }
+          if (headers[j]) {
+            obj[headers[j]] = d;
+          }
+        }
+
+        // remove the blank rows
+        if (Object.values(obj).filter(x => x).length > 0) {
+          // list.push(obj);
+          csvAddresses.push(obj["address"]);
+
+          csvAmounts.push(ethers.utils.parseEther(obj["amount"]));
+          csvTotals += Number(obj["amount"]);
+        }
+      }
+    }
+    if (csvAddresses.length > 200 || csvAddresses.length !== csvAmounts.length) {
+      alert("You have more than 200. It should be atmost 200 per batch");
+      return;
+    }
+
+    setAddresses(csvAddresses);
+    setAmounts(csvAmounts);
+    setTotalAmount(ethers.utils.parseEther(`${csvTotals}`));
+  };
+
+  const handleChange = ({ fileList }) => {
+    setCustomers({ fileList });
+
+    // Parse through CSV files
+    if (fileList.length === 0) {
+      setAddresses([]);
+      setAmounts([]);
+      setTotalAmount(0);
+
+      return;
+    }
+
+    const file = fileList[0].originFileObj;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      /* Parse data */
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: "binary" });
+      /* Get first worksheet */
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      /* Convert array of arrays */
+      const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
+      processData(data);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const [addressToCheckBalance, setAddressToCheckBalance] = useState("");
+  const [balanceCheckAmount, setBalanceCheckAmount] = useState(0);
+
+  const handleCheckBalance = async () => {
+    if(addressToCheckBalance){
+      setBalanceCheckAmount(await tx(readContracts.Nestcoin.balanceOf(addressToCheckBalance)));
+    }
+  }
 
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
-      <NetworkDisplay
-        NETWORKCHECK={NETWORKCHECK}
-        localChainId={localChainId}
-        selectedChainId={selectedChainId}
-        targetNetwork={targetNetwork}
-        logoutOfWeb3Modal={logoutOfWeb3Modal}
-        USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
-      />
-      <Menu style={{ textAlign: "center", marginTop: 40 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/admin">
-          <Link to="/admin">Admin Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/customer">
-          <Link to="/customer">Customer Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-        <Menu.Item key="/hints">
-          <Link to="/hints">Hints</Link>
-        </Menu.Item>
-        <Menu.Item key="/exampleui">
-          <Link to="/exampleui">ExampleUI</Link>
-        </Menu.Item>
-        <Menu.Item key="/mainnetdai">
-          <Link to="/mainnetdai">Mainnet DAI</Link>
-        </Menu.Item>
-        <Menu.Item key="/subgraph">
-          <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
-      </Menu>
+      {networkDisplay}
+      <BrowserRouter>
+        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
+          <Menu.Item key="/">
+            <Link
+              onClick={() => {
+                setRoute("/");
+              }}
+              to="/"
+            >
+              Admin Portal
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/customerPortal">
+            <Link
+              onClick={() => {
+                setRoute("/customerPortal");
+              }}
+              to="/customerPortal"
+            >
+              Customer Portal
+            </Link>
+          </Menu.Item>
+        </Menu>
 
-      <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
-        </Route>
-        <Route exact path="/admin">
-          <AdminAccess />
-        </Route>
-        <Route exact path="/customer">
-          <CustomerAccess/>
-        </Route>
-        <Route exact path="/debug">
-          {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
+        <Switch>
+          <Route exact path="/">
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
+              <Card title="Reward Loyal Customers">
+                <div style={{ padding: 8 }}>
+                  <Upload
+                    accept=".csv,.xlsx,.xls"
+                    action="#"
+                    listType="picture-card"
+                    fileList={customers.fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    beforeUpload={() => false}
+                    maxCount={1}
+                  >
+                    {customers.fileList.length === 0 && (
+                      <div>
+                        <div style={{ marginTop: 8 }}>Upload csv</div>
+                      </div>
+                    )}
+                  </Upload>
+                  {/* <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to buy"}
+                    value={tokenBuyAmount.value}
+                    onChange={e => {
+                      const newValue = e.target.value.startsWith(".") ? "0." : e.target.value;
+                      const buyAmount = {
+                        value: newValue,
+                        valid: /^\d*\.?\d+$/.test(newValue),
+                      };
+                      setTokenBuyAmount(buyAmount);
+                    }}
+                  /> */}
+                  <Balance balance={totalAmount} />
+                </div>
 
-          <Contract
-            name="YourContract"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-          />
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={tokenTransfering}
+                    onClick={async () => {
+                      setTokenTransfering(true);
+                      await tx(writeContracts.Nxt.batchTokenTransfer(addresses, amounts, totalAmount));
+                      setTokenTransfering(false);
+                    }}
+                    disabled={customers.fileList.length === 0}
+                  >
+                    Send Tokens
+                  </Button>
+                </div>
+              </Card>
+            </div>
 
-          <Contract
-            name="AdminAccess"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-          />
+            <div style={{ padding: 8, marginTop: 32 }}>
+              <div>Total Supply:</div>
+              <Balance balance={nestcoinTotalSupply} fontSize={64} />
+            </div>
+            <div style={{ padding: 8 }}>
+              <div>Nestcoin Exchange Balance:</div>
+              <Balance balance={nxtTokenBalance} fontSize={64} /> NTK
+            </div>
 
-          <Contract
-            name="NestCoin"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-          />
-        </Route>
-        <Route path="/hints">
-          <Hints
-            address={address}
-            yourLocalBalance={yourLocalBalance}
-            mainnetProvider={mainnetProvider}
-            price={price}
-          />
-        </Route>
-        <Route path="/exampleui">
-          <ExampleUI
-            address={address}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            localProvider={localProvider}
-            yourLocalBalance={yourLocalBalance}
-            price={price}
-            tx={tx}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            purpose={purpose}
-          />
-        </Route>
-        <Route path="/mainnetdai">
-          <Contract
-            name="DAI"
-            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
-            signer={userSigner}
-            provider={mainnetProvider}
-            address={address}
-            blockExplorer="https://etherscan.io/"
-            contractConfig={contractConfig}
-            chainId={1}
-          />
-          {/*
-            <Contract
-              name="UNI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            */}
-        </Route>
-        <Route path="/subgraph">
-          <Subgraph
-            subgraphUri={props.subgraphUri}
-            tx={tx}
-            writeContracts={writeContracts}
-            mainnetProvider={mainnetProvider}
-          />
-        </Route>
-      </Switch>
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
+              <Card title="Balance Check">
+                <div style={{ padding: 8 }}>
+                  <Input
+                    type="text"
+                    style={{ textAlign: "center" }}
+                    placeholder={"Address"}
+                    value={addressToCheckBalance}
+                    onChange={e => {
+                      setAddressToCheckBalance(e.target.value);
+                    }}
+                  />
+                  <Balance balance={balanceCheckAmount} />
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={tokenTransfering}
+                    onClick={handleCheckBalance}
+                    disabled={!addressToCheckBalance}
+                  >
+                    Check Balance
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Batch Transfer Events:</div>
+              <List
+                dataSource={batchTransferEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item.blockNumber + item.blockHash}>
+                      <Address value={item.args[1]} ensProvider={mainnetProvider} fontSize={16} />
+                      Batch transfered ====
+                      <Balance balance={item.args[0]} />
+                      NKT
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </Route>
+          <Route path="/customerPortal">
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
+              <Card title="Pay with Nestcoin">
+                <div style={{ padding: 8 }}>
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to pay with"}
+                    value={paymentAmount.value}
+                    onChange={e => {
+                      const newValue = e.target.value.startsWith(".") ? "0." : e.target.value;
+                      const sellAmount = {
+                        value: newValue,
+                        valid: /^\d*\.?\d+$/.test(newValue),
+                      };
+                      setPaymentAmount(sellAmount);
+                    }}
+                  />
+                </div>
+                {isPaymentAmountApproved ? (
+                  <div style={{ padding: 8 }}>
+                    <Button disabled={true} type={"primary"}>
+                      Approve Tokens
+                    </Button>
+                    <Button
+                      type={"primary"}
+                      loading={paying}
+                      onClick={async () => {
+                        setPaying(true);
+                        await tx(
+                          writeContracts.Nxt.pay(
+                            paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
+                            ethers.utils.formatBytes32String(uniqid()),
+                          ),
+                        );
+                        setPaying(false);
+                        setPaymentAmount("");
+                      }}
+                      disabled={!paymentAmount.valid}
+                    >
+                      Pay
+                    </Button>
+                  </div>
+                ) : (
+                  <div style={{ padding: 8 }}>
+                    <Button
+                      type={"primary"}
+                      loading={paying}
+                      onClick={async () => {
+                        setPaying(true);
+                        await tx(
+                          writeContracts.Nestcoin.approve(
+                            readContracts.Nxt.address,
+                            paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
+                          ),
+                        );
+                        setPaying(false);
+                        let resetAmount = paymentAmount;
+                        setPaymentAmount("");
+                        setTimeout(() => {
+                          setPaymentAmount(resetAmount);
+                        }, 1500);
+                      }}
+                      disabled={!paymentAmount.valid}
+                    >
+                      Approve Tokens
+                    </Button>
+                    <Button disabled={true} type={"primary"}>
+                      Pay
+                    </Button>
+                  </div>
+                )}
+              </Card>
+            </div>
+
+            <div style={{ padding: 8, marginTop: 32 }}>
+              <div>Your Nestcoin Balance:</div>
+              <Balance balance={yourNestcoinBalance} fontSize={64} />
+            </div>
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Payment Events:</div>
+              <List
+                dataSource={paymentEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item.blockNumber + item.blockHash}>
+                      <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} />
+                      &nbsp;&nbsp;
+                      <Balance balance={item.args[1]} />
+                      NKT &nbsp;&nbsp;
+                      <span>ref({ethers.utils.parseBytes32String(item.args[2])})</span> &nbsp;&nbsp;
+                      <span>date({formatDate(item.args[3])})</span>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </Route>
+        </Switch>
+      </BrowserRouter>
 
       <ThemeSwitch />
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
-          {USE_NETWORK_SELECTOR && (
-            <div style={{ marginRight: 20 }}>
-              <NetworkSwitch
-                networkOptions={networkOptions}
-                selectedNetwork={selectedNetwork}
-                setSelectedNetwork={setSelectedNetwork}
-              />
-            </div>
-          )}
-          <Account
-            useBurner={USE_BURNER_WALLET}
-            address={address}
-            localProvider={localProvider}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            price={price}
-            web3Modal={web3Modal}
-            loadWeb3Modal={loadWeb3Modal}
-            logoutOfWeb3Modal={logoutOfWeb3Modal}
-            blockExplorer={blockExplorer}
-          />
-        </div>
-        {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-          <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-        )}
+        <Account
+          address={address}
+          localProvider={localProvider}
+          userSigner={userSigner}
+          mainnetProvider={mainnetProvider}
+          price={price}
+          web3Modal={web3Modal}
+          loadWeb3Modal={loadWeb3Modal}
+          logoutOfWeb3Modal={logoutOfWeb3Modal}
+          blockExplorer={blockExplorer}
+        />
+        {faucetHint}
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
