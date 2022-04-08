@@ -4,7 +4,6 @@ pragma solidity ^0.8.4;
 //importing our Nestcoin token contract
 import "./NestCoin.sol";
 
-
 //declaring the  contract is ownable to enable us call functions from the inherited contacts
 contract Nestdrop {
     constructor(address _NestCoin) {
@@ -43,6 +42,10 @@ contract Nestdrop {
         require(
             _address.length == _rewards.length,
             "Array Lengths must be equal."
+        );
+        require(
+            _address.length <= 200,
+            "sorry, maximum number of addresses on a list cannot be more than 200"
         );
 
         for (uint i = 0; i < _address.length; i++) {
