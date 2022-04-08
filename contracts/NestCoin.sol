@@ -1,10 +1,10 @@
 //SPDX-License-Identifier:MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NestcoinReward is ERC20, Ownable  {
+
+contract NestcoinReward is ERC20  {
     //track nestcoin admins
     mapping(address=>bool) private admins; 
 
@@ -17,7 +17,7 @@ contract NestcoinReward is ERC20, Ownable  {
     //events
     event AssignedAdmin(address newAdmin);
     event RemovedAdmin(address newAdmin);
-    event DispatchRewards(string message);
+  //  event DispatchRewards(string message);
 
 
     constructor() ERC20("Nestcoin","NCT"){
@@ -51,6 +51,7 @@ contract NestcoinReward is ERC20, Ownable  {
             i++){_mint(_addrs[i], (_rewards[i] *(10 ** 18))
             );
         }
-        emit DispatchRewards("Rewards Successfully dispatched!");
+      //emit DispatchRewards("Rewards Successfully dispatched!");
+      
     }  
 }

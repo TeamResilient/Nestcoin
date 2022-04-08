@@ -187,7 +187,7 @@ $ npx hardhat test --network localhost
 
 #
 > ## Verified Contract Address: 
-https://rinkeby.etherscan.io/address/0x9DC7331249dd5E9474E9da1d747537D0075561Ba#code
+https://rinkeby.etherscan.io/address/0x287afff0dc95f8aa23608819912ce50ba2631c32#code
 
 #
 > ## Coverage Test: 
