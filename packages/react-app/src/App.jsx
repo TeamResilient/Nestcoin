@@ -253,24 +253,25 @@ function App(props) {
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]);
 
-  const nxtAddress = readContracts && readContracts.Nxt && readContracts.Nxt.address;
+  const nestcoinAddress = readContracts && readContracts.NestCoin && readContracts.NestCoin.address;
 
-  const nxtETHBalance = useBalance(localProvider, nxtAddress);
-  if (DEBUG) console.log("💵 nxtETHBalance", nxtETHBalance ? ethers.utils.formatEther(nxtETHBalance) : "...");
+  const nestcoinETHBalance = useBalance(localProvider, nestcoinAddress);
+  if (DEBUG)
+    console.log("💵 nestcoinETHBalance", nestcoinETHBalance ? ethers.utils.formatEther(nestcoinETHBalance) : "...");
 
-  const nxtApproval = useContractReader(readContracts, "Nestcoin", "allowance", [address, nxtAddress]);
-  console.log("🤏 nxtApproval", nxtApproval);
+  const nestcoinApproval = useContractReader(readContracts, "NestCoin", "allowance", [address, nestcoinAddress]);
+  console.log("🤏 nestcoinApproval", nestcoinApproval);
 
-  const nestcoinTotalSupply = useContractReader(readContracts, "Nestcoin", "totalSupply", []);
+  const nestcoinTotalSupply = useContractReader(readContracts, "NestCoin", "totalSupply", []);
   console.log("🏵 nestcoinTotalSupply:", nestcoinTotalSupply ? ethers.utils.formatEther(nestcoinTotalSupply) : "...");
 
-  const nxtTokenBalance = useContractReader(readContracts, "Nestcoin", "balanceOf", [nxtAddress]);
-  console.log("🏵 nxtTokenBalance:", nxtTokenBalance ? ethers.utils.formatEther(nxtTokenBalance) : "...");
+  const nestcoinTokenBalance = useContractReader(readContracts, "NestCoin", "balanceOf", [nestcoinAddress]);
+  console.log("🏵 nestcoinTokenBalance:", nestcoinTokenBalance ? ethers.utils.formatEther(nestcoinTokenBalance) : "...");
 
-  const yourNestcoinBalance = useContractReader(readContracts, "Nestcoin", "balanceOf", [address]);
-  console.log("🏵 yourTokenBalance:", yourNestcoinBalance ? ethers.utils.formatEther(yourNestcoinBalance) : "...");
+  const yourNestCoinBalance = useContractReader(readContracts, "NestCoin", "balanceOf", [address]);
+  console.log("🏵 yourTokenBalance:", yourNestCoinBalance ? ethers.utils.formatEther(yourNestCoinBalance) : "...");
 
-  const tokensPerEth = useContractReader(readContracts, "Nxt", "tokensPerEth");
+  const tokensPerEth = useContractReader(readContracts, "NestCoin", "tokensPerEth");
   console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
 
   // const complete = useContractReader(readContracts,"ExampleExternalContract", "completed")
@@ -482,10 +483,10 @@ function App(props) {
     );
   }
 
-  const batchTransferEvents = useEventListener(readContracts, "Nxt", "BatchTransfer", localProvider, 1);
-  const paymentEvents = useEventListener(readContracts, "Nxt", "Payment", localProvider, 1);
+  const Dispatched = useEventListener(readContracts, "NestCoin", "airdrop", localProvider, 1);
+  const paymentEvents = useEventListener(readContracts, "NestCoin", "Payment", localProvider, 1);
 
-  console.log("📟 batchTransferEvents:", batchTransferEvents);
+  console.log("📟 Dispatched:", Dispatched);
 
   const [tokenBuyAmount, setTokenBuyAmount] = useState({
     valid: false,
@@ -502,7 +503,7 @@ function App(props) {
     console.log("paymentAmount", paymentAmount.value);
     const paymentAmountBN = paymentAmount.valid ? ethers.utils.parseEther("" + paymentAmount.value) : 0;
     console.log("paymentAmountBN", paymentAmountBN);
-    setIsPaymentAmountApproved(nxtApproval && paymentAmount.value && nxtApproval.gte(paymentAmountBN));
+    setIsPaymentAmountApproved(nestcoinApproval && paymentAmount.value && nestcoinApproval.gte(paymentAmountBN));
   }, [paymentAmount, readContracts]);
   console.log("isPaymentAmountApproved", isPaymentAmountApproved);
 
@@ -609,7 +610,7 @@ function App(props) {
 
   const handleCheckBalance = async () => {
     if (addressToCheckBalance) {
-      setBalanceCheckAmount(await tx(readContracts.Nestcoin.balanceOf(addressToCheckBalance)));
+      setBalanceCheckAmount(await tx(readContracts.NestCoin.balanceOf(addressToCheckBalance)));
     }
   };
 
@@ -701,7 +702,7 @@ function App(props) {
                     }}
                     disabled={customersCsvFile.length === 0}
                   >
-                    Send Tokens
+                    Airdrop Tokens
                   </Button>
                 </div>
               </Card>
@@ -711,10 +712,10 @@ function App(props) {
               <div>Total Supply:</div>
               <Balance balance={nestcoinTotalSupply} fontSize={64} /> NCT
             </div>
-            <div style={{ padding: 8 }}>
-              <div>Nestcoin Exchange Balance:</div>
-              <Balance balance={nxtTokenBalance} fontSize={64} /> NCT
-            </div>
+            {/* <div style={{ padding: 8 }}>
+             {/* <div>NestCoin Exchange Balance:</div> 
+              <Balance balance={nestcoinTokenBalance} fontSize={64} /> NCT
+            </div> */}
 
             <Divider />
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
@@ -746,9 +747,9 @@ function App(props) {
             </div>
 
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
-              <div>Batch Transfer Events:</div>
+              <div>Dispatched:</div>
               <List
-                dataSource={batchTransferEvents}
+                dataSource={Dispatched}
                 renderItem={item => {
                   return (
                     <List.Item key={item.blockNumber + item.blockHash}>
@@ -766,7 +767,7 @@ function App(props) {
           <Route path="/customerPortal">
             <Divider />
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
-              <Card title="Pay with Nestcoin">
+              <Card title="Pay with NestCoin">
                 <div style={{ padding: 8 }}>
                   <Input
                     style={{ textAlign: "center" }}
@@ -818,7 +819,7 @@ function App(props) {
                       onClick={async () => {
                         setPaying(true);
                         await tx(
-                          writeContracts.Nestcoin.approve(
+                          writeContracts.NestCoin.approve(
                             readContracts.Nestdrop.address,
                             paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
                           ),
@@ -843,8 +844,8 @@ function App(props) {
             </div>
 
             <div style={{ padding: 8, marginTop: 32 }}>
-              <div>Your Nestcoin Balance:</div>
-              <Balance balance={yourNestcoinBalance} fontSize={64} /> NCT
+              <div>Your NestCoin Balance:</div>
+              <Balance balance={yourNestCoinBalance} fontSize={64} /> NCT
             </div>
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
               <div>Payment Events:</div>
@@ -877,7 +878,7 @@ function App(props) {
                     value={addressToEditAccess}
                     onChange={async e => {
                       setAddressToEditAccess(e.target.value);
-                      setIsAddressAdmin(await tx(readContracts.Nestdrop.isAdmin(e.target.value)));
+                      setIsAddressAdmin(await tx(readContracts.Nestdrop.assignAdmin(e.target.value)));
                     }}
                   />
                 </div>
@@ -892,7 +893,7 @@ function App(props) {
                       loading={editingAccess}
                       onClick={async () => {
                         setEditingAccess(true);
-                        await tx(writeContracts.Nxt.removeAdmin(addressToEditAccess));
+                        await tx(writeContracts.NestCoin.removeAdmin(addressToEditAccess));
                         message.info("You are no longer Admin");
                         setEditingAccess(false);
                         setAddressToEditAccess("");
