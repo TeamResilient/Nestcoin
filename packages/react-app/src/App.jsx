@@ -686,7 +686,7 @@ function App(props) {
                       setTokenBuyAmount(buyAmount);
                     }}
                   /> */}
-                  <Balance balance={totalAmount} /> NTK <div>{totalAmount ? `to ${addresses.length} loyal customers` : ''}</div>
+                  <Balance balance={totalAmount} /> NCT <div>{totalAmount ? `to ${addresses.length} loyal customers` : ''}</div>
                 </div>
 
                 <div style={{ padding: 8 }}>
@@ -695,7 +695,7 @@ function App(props) {
                     loading={tokenTransfering}
                     onClick={async () => {
                       setTokenTransfering(true);
-                      await tx(writeContracts.Nxt.batchTokenTransfer(addresses, amounts, totalAmount));
+                      await tx(writeContracts.Nestdrop.airdrop(addresses, amounts));
                       setTokenTransfering(false);
                       setCustomersCsvFile([]);
                     }}
@@ -709,11 +709,11 @@ function App(props) {
 
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Total Supply:</div>
-              <Balance balance={nestcoinTotalSupply} fontSize={64} /> NTK
+              <Balance balance={nestcoinTotalSupply} fontSize={64} /> NCT
             </div>
             <div style={{ padding: 8 }}>
               <div>Nestcoin Exchange Balance:</div>
-              <Balance balance={nxtTokenBalance} fontSize={64} /> NTK
+              <Balance balance={nxtTokenBalance} fontSize={64} /> NCT
             </div>
 
             <Divider />
@@ -729,7 +729,7 @@ function App(props) {
                       setAddressToCheckBalance(e.target.value);
                     }}
                   />
-                  <Balance balance={balanceCheckAmount} /> NTK
+                  <Balance balance={balanceCheckAmount} /> NCT
                 </div>
 
                 <div style={{ padding: 8 }}>
@@ -756,7 +756,7 @@ function App(props) {
                       &nbsp;&nbsp;
                       Batch transfered &nbsp;&nbsp;
                       <Balance balance={item.args[1]} />
-                      NKT
+                      NCT
                     </List.Item>
                   );
                 }}
@@ -797,7 +797,7 @@ function App(props) {
                       onClick={async () => {
                         setPaying(true);
                         await tx(
-                          writeContracts.Nxt.pay(
+                          writeContracts.Nestdrop.pay(
                             paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
                             ethers.utils.formatBytes32String(paymentRef),
                           ),
@@ -819,7 +819,7 @@ function App(props) {
                         setPaying(true);
                         await tx(
                           writeContracts.Nestcoin.approve(
-                            readContracts.Nxt.address,
+                            readContracts.Nestdrop.address,
                             paymentAmount.valid && ethers.utils.parseEther(paymentAmount.value),
                           ),
                         );
@@ -844,7 +844,7 @@ function App(props) {
 
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Your Nestcoin Balance:</div>
-              <Balance balance={yourNestcoinBalance} fontSize={64} /> NTK
+              <Balance balance={yourNestcoinBalance} fontSize={64} /> NCT
             </div>
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
               <div>Payment Events:</div>
@@ -877,7 +877,7 @@ function App(props) {
                     value={addressToEditAccess}
                     onChange={async e => {
                       setAddressToEditAccess(e.target.value);
-                      setIsAddressAdmin(await tx(readContracts.Nxt.isAdmin(e.target.value)));
+                      setIsAddressAdmin(await tx(readContracts.Nestdrop.isAdmin(e.target.value)));
                     }}
                   />
                 </div>
@@ -909,7 +909,7 @@ function App(props) {
                       loading={editingAccess}
                       onClick={async () => {
                         setEditingAccess(true);
-                        await tx(writeContracts.Nxt.addAdmin(addressToEditAccess));
+                        await tx(writeContracts.Nestdrop.addAdmin(addressToEditAccess));
                         message.info("You are now an Admin");
                         setEditingAccess(false);
                         setAddressToEditAccess("");
