@@ -34,7 +34,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   // Transfer ownership of Nxt to Admin
   const ownershipTransaction2 = await nxt.transferOwnership(
-    "** YOUR FRONTEND ADDRESS **"
+    "0x20497F37a8169c8C9fA09411F8c2CFB7c90dE5d1"
   );
 
   console.log("\n    ✅ confirming...\n");
