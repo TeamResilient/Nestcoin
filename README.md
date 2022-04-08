@@ -189,4 +189,9 @@ $ npx hardhat test --network localhost
 > ## Verified Contract Address: 
 https://rinkeby.etherscan.io/address/0x9DC7331249dd5E9474E9da1d747537D0075561Ba#code
 
+#
+> ## Coverage Test: 
+$ npm i install ganache-cli 
+$ npx hardhat coverage --network localhost 
+
 
