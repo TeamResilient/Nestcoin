@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 // importing the ERC20 token standard from openzepplin
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 //declaring that Nestcoin is a type of ERC20 token
 
@@ -14,5 +14,5 @@ contract NestCoin is ERC20 {
         _mint(msg.sender, 10000000 * 10 ** decimals());
     }
 
- 
+     
 }

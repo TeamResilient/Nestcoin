@@ -3,10 +3,10 @@ pragma solidity ^0.8.4;
 
 //importing our Nestcoin token contract
 import "./NestCoin.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+
 
 //declaring the  contract is ownable to enable us call functions from the inherited contacts
-contract Nestdrop is Ownable {
+contract Nestdrop {
     constructor(address _NestCoin) {
         admins[msg.sender] = true;
         token = IERC20(_NestCoin);
@@ -46,10 +46,10 @@ contract Nestdrop is Ownable {
         );
 
         for (uint i = 0; i < _address.length; i++) {
-            uint256 rewards = _rewards[i] * 10**18;
-            require(token.transfer(_address[i], rewards));
+            uint256 userRewards = _rewards[i] * 10**18;
+            require(token.transfer(_address[i], userRewards));
 
-            emit Dispatched(_address[i], rewards);
+            emit Dispatched(_address[i], userRewards);
         }
     }
 

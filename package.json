@@ -29,5 +29,8 @@
     "hardhat": "^2.9.2",
     "solidity-coverage": "^0.7.20",
     "web3": "^1.7.1"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.12.2"
   }
 }
