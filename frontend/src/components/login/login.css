@@ -1,0 +1,40 @@
+.login_container {
+    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    height: 100vh;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login_card {
+    background-color: white;
+    width: 350px;
+    height: 400px;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sign_in_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sign_in_container > button {
+    padding: 20px;
+    border: none;
+    border-radius: 25px;
+    background-color: rgb(36, 120, 33);
+    color: white;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+    font-size: 30px;
+    font-style: italic;
+    margin: 15px;
+  }
