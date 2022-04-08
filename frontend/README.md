@@ -1,10 +1,36 @@
-# HARDHAT SETUP FOR FRONTEND
-- cd into client
-- setup vite: npm install vite@latest
-- install package dependencies: npm install
-- install tailwind: npm install -D tailwindcss postcss autoprefixer
-- create tailwindcss and postcss config files: npx tailwindcss init -p
-- Add token to metamask using the contract address
+# Team Resilient
+
+The project is a Rewards sending engine to send rewards to loyal customers with real time and scheduling notifications feature.
+
+#### Team members:
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 
 
-- For production before hosting: npm run build
+
+#### Tech stacks used:
+- Python-Flask
+- HTML/ CSS/ JavaScript
+
+
+## Usage Guide
+
+Basic requirements: Python 3.6 or higher
+
+
+#### Installation of dependencies
+```
+$ pip install -r requirements.txt
+```
+
+
+#### Running the project
+```
+$ python run.py
+```
+
