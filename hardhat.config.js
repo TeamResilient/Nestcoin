@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 const dotenv = require("dotenv");
+require('solidity-coverage')
 
 dotenv.config();
 const defaultNetwork = "rinkeby";

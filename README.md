@@ -189,4 +189,18 @@ $ npx hardhat test --network localhost
 > ## Verified Contract Address: 
 https://rinkeby.etherscan.io/address/0x287afff0dc95f8aa23608819912ce50ba2631c32#code
 
+#
+> ## Coverage Test: 
+- Install Solidity Coverage
+$ npm i solidity-coverage
+```
+- Add plugin to hardhat config 
+require('solidity-coverage')
+```
+- Import Ganache 
+$ npm i install ganache-cli 
+```
+-
+$ npx hardhat coverage --network localhost 
+
 
