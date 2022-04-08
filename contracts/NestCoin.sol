@@ -7,12 +7,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 //declaring that Nestcoin is a type of ERC20 token
 
-contract NestCoin is ERC20 {
+contract NestCoin is ERC20, Ownable {
     //declaring the Name and Symbol of the token
     constructor() ERC20("NestCoin", "NCT") {
         //pre-minting 10million nestcoin
-        _mint(msg.sender, 10000000 * 10 ** decimals());
+        _mint(msg.sender, 10000000 * 10**decimals());
     }
-
-     
+     function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
 }
