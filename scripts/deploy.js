@@ -28,7 +28,7 @@ async function main(){
   const deployedNestdropContract = await NestdropContract.deploy(deployedNestcoinContract.address)
 
   // Wait for it to finish deploying
-  await deployedNestcoinContract.deployed();
+  await deployedNestdropContract.deployed();
 
   // print the address of the deployed contract
   console.log(
