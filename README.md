@@ -62,7 +62,9 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 </p>
 
     $ git remote add upstream https://github.com/TeamResilient/Nestcoin.git
+
 #
+
 > ## Requirements
 
 #
@@ -174,33 +176,43 @@ $ npx hardhat run scripts/deploy.js --network rinkeby
 - To verify the smartcontract:
 
 ```
-$ npx hardhat verify DEPLOYED_ADDRESS --network rinkeby
+$ npx hardhat verify 0x86A39190b8f4a7515e82d0c68E00e4144230AD2D --network rinkeby "0x676c6c08C4F81182a40dBcf399b07222E0FdDb70"
 ```
 
-
 #
+
 > ### Test
-- To test the smartcontract: 
+
+- To test the smartcontract:
+
 ```
 $ npx hardhat test --network localhost
 ```
 
 #
-> ## Verified Contract Address: 
-https://rinkeby.etherscan.io/address/0x287afff0dc95f8aa23608819912ce50ba2631c32#code
+
+> ## Verified Contract Address:
+>
+> https://rinkeby.etherscan.io/address/0x86A39190b8f4a7515e82d0c68E00e4144230AD2D#code
 
 #
-> ## Coverage Test: 
+
+> ## Coverage Test:
+
 - Install Solidity Coverage
-$ npm i solidity-coverage
+  $ npm i solidity-coverage
+
 ```
-- Add plugin to hardhat config 
+- Add plugin to hardhat config
 require('solidity-coverage')
 ```
-- Import Ganache 
-$ npm i install ganache-cli 
+
+- Import Ganache
+  $ npm i install ganache-cli
+
 ```
 -
-$ npx hardhat coverage --network localhost 
+$ npx hardhat coverage --network localhost
 
 
+```
