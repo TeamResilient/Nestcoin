@@ -11,11 +11,15 @@ contract Nestdrop {
         token = IERC20(_NestCoin);
     }
 
+    //declaration of our token contract
     IERC20 public token;
+    //mapping of admins to bool
     mapping(address => bool) private admins;
 
+    //event to track airdrop
     event Dispatched(address customer, uint amount);
 
+    //modifier to ensure only admins can call selected functions.
     modifier isAdmin(address _user) {
         bool isadmin = admins[_user];
         require(isadmin, "Only Admin Has Access!");
