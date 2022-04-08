@@ -6,7 +6,7 @@ let contract;
 let firstcontract;
 
 describe("NestCoin", function(){
-    it("should deploye the nestcoin and nestdrop contract to the testnet", async function(){
+    it("should deploy the nestcoin and nestdrop contract to the testnet", async function(){
         console.log("deploying Nestcoin contract.......")
     const NestcoinContract = await ethers.getContractFactory("NestCoin");
     const deployedNestcoinContract = await NestcoinContract.deploy();
