@@ -11,11 +11,12 @@ contract Nestdrop is Ownable {
         admins[msg.sender] = true;
         token = IERC20(_NestCoin);
     }
-
+     
+  
     IERC20 public token;
     mapping(address => bool) private admins;
 
-    event Dispatched(address customer, uint amount);
+   event Dispatched(address indexed adminAddress, uint256 totalAmount);
 
     modifier isAdmin(address _user) {
         bool isadmin = admins[_user];
@@ -34,8 +35,11 @@ contract Nestdrop is Ownable {
         admins[_admin] = false;
     }
 
+
+
     //distribute rewards to eligible customers
-    function airdrop(address[] calldata _address, uint256[] calldata _rewards)
+    function airdrop(address[] memory _address, uint256[] memory _rewards, uint256 totalAmount)
+    
         external
         isAdmin(msg.sender)
     {
@@ -45,13 +49,16 @@ contract Nestdrop is Ownable {
             "Array Lengths must be equal."
         );
 
+   
+
         for (uint i = 0; i < _address.length; i++) {
             //uint256 userRewards = _rewards[i] * 10**18;
             uint256 userRewards = _rewards[i];
             require(token.transfer(_address[i], userRewards));
 
-            emit Dispatched(_address[i], userRewards);
+           
         }
+         emit Dispatched(msg.sender, totalAmount);
     }
 
     function kill() external isAdmin(msg.sender) {

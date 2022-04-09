@@ -1,31 +1,62 @@
-import React, { useState } from "react";
-import { Row, Col, Button, Divider } from "antd";
+import React from "react";
+import styled from "styled-components";
+import "./Movie.css";
 
+const MovieContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 280px;
+  box-shadow: 0 3px 10px 0 #aaa;
+  cursor: pointer;
+`;
+const CoverImage = styled.img`
+  object-fit: cover;
+  height: 362px;
+`;
+const MovieName = styled.span`
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+  margin: 15px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+const InfoColumn = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+const MovieInfo = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-transform: capitalize;
+  text-overflow: ellipsis;
+`;
 
+const MovieComponent = props => {
+  const { Title, Year, imdbID, Type, Poster } = props.movie;
 
-export default function CustomerAccess(){
-    return (
-    <div>
-        <Divider orientation="left" ></Divider>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col className="gutter-row" span={6}>
-                <div>Ambulance Ticket</div>
-                <Button>Pay 0.01 ETH</Button>
-            </Col>
-            <Col className="gutter-row" span={6}>
-                <div>NestCoin Cap</div>
-                <Button>Pay 0.01 ETH</Button>
-            </Col>
-             <Col className="gutter-row" span={6}>
-                <div>NestCoin Hoodie</div>
-                <Button>Pay 0.01 ETH</Button>
-            </Col>
-            <Col className="gutter-row" span={6}>
-                <div>SpiderMan 3 Tickets</div>
-                <Button>Pay 0.01 ETH</Button>
-            </Col>
-            
-        </Row>
-    </div>
-    );
-}
+  return (
+    <MovieContainer
+      onClick={() => {
+        props.onMovieSelect(imdbID);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+    >
+      <CoverImage src={Poster} alt={Title} />
+      <MovieName>{Title}</MovieName>
+      <button className="glow-on-hover">Buy Now with 5 NestCoins</button>
+      <InfoColumn>
+        <MovieInfo>Year : {Year}</MovieInfo>
+        <MovieInfo>Type : {Type}</MovieInfo>
+      </InfoColumn>
+    </MovieContainer>
+  );
+};
+
+export default MovieComponent;

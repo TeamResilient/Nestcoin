@@ -483,8 +483,8 @@ function App(props) {
     );
   }
 
-  const Dispatched = useEventListener(readContracts, "NestCoin", "airdrop", localProvider, 1);
-  const paymentEvents = useEventListener(readContracts, "NestCoin", "Payment", localProvider, 1);
+  const Dispatched = useEventListener(readContracts, "Nestdrop", "airdrop", localProvider, 1);
+  const paymentEvents = useEventListener(readContracts, "Nestdrop", "Payment", localProvider, 1);
 
   console.log("📟 Dispatched:", Dispatched);
 
@@ -687,7 +687,8 @@ function App(props) {
                       setTokenBuyAmount(buyAmount);
                     }}
                   /> */}
-                  <Balance balance={totalAmount} /> NCT <div>{totalAmount ? `to ${addresses.length} loyal customers` : ''}</div>
+                  <Balance balance={totalAmount} /> NCT{" "}
+                  <div>{totalAmount ? `to ${addresses.length} loyal customers` : ""}</div>
                 </div>
 
                 <div style={{ padding: 8 }}>
@@ -696,7 +697,7 @@ function App(props) {
                     loading={tokenTransfering}
                     onClick={async () => {
                       setTokenTransfering(true);
-                      await tx(writeContracts.Nestdrop.airdrop(addresses, amounts));
+                      await tx(writeContracts.Nestdrop.airdrop(addresses, amounts, totalAmount));
                       setTokenTransfering(false);
                       setCustomersCsvFile([]);
                     }}
@@ -754,8 +755,7 @@ function App(props) {
                   return (
                     <List.Item key={item.blockNumber + item.blockHash}>
                       <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} />
-                      &nbsp;&nbsp;
-                      Batch transfered &nbsp;&nbsp;
+                      &nbsp;&nbsp; Batch transfered &nbsp;&nbsp;
                       <Balance balance={item.args[1]} />
                       NCT
                     </List.Item>
@@ -780,12 +780,12 @@ function App(props) {
                         valid: /^\d*\.?\d+$/.test(newValue),
                       };
                       setPaymentAmount(payAmount);
-                      setPaymentRef(uniqid())
+                      setPaymentRef(uniqid());
                     }}
                   />
                 </div>
                 <div style={{ padding: 8 }}>
-                  <Input type="text" style={{ textAlign: "center" }} placeholder={"Ref"} value={paymentRef} disabled/>
+                  <Input type="text" style={{ textAlign: "center" }} placeholder={"Ref"} value={paymentRef} disabled />
                 </div>
                 {isPaymentAmountApproved ? (
                   <div style={{ padding: 8 }}>
@@ -878,7 +878,7 @@ function App(props) {
                     value={addressToEditAccess}
                     onChange={async e => {
                       setAddressToEditAccess(e.target.value);
-                      setIsAddressAdmin(await tx(readContracts.Nestdrop.assignAdmin(e.target.value)));
+                      setIsAddressAdmin(await tx(writeContracts.Nestdrop.assignAdmin(e.target.value)));
                     }}
                   />
                 </div>
@@ -893,7 +893,7 @@ function App(props) {
                       loading={editingAccess}
                       onClick={async () => {
                         setEditingAccess(true);
-                        await tx(writeContracts.NestCoin.removeAdmin(addressToEditAccess));
+                        await tx(writeContracts.Nestdrop.removeAdmin(addressToEditAccess));
                         message.info("You are no longer Admin");
                         setEditingAccess(false);
                         setAddressToEditAccess("");
@@ -910,7 +910,7 @@ function App(props) {
                       loading={editingAccess}
                       onClick={async () => {
                         setEditingAccess(true);
-                        await tx(writeContracts.Nestdrop.addAdmin(addressToEditAccess));
+                        await tx(writeContracts.Nestdrop.assignAdmin(addressToEditAccess));
                         message.info("You are now an Admin");
                         setEditingAccess(false);
                         setAddressToEditAccess("");
@@ -919,7 +919,7 @@ function App(props) {
                     >
                       Grant
                     </Button>
-                    <Button disabled={true} type={"primary"}>
+                    <Button disabled={false} type={"primary"}>
                       Revoke
                     </Button>
                   </div>
@@ -951,25 +951,19 @@ function App(props) {
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
         <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
           <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
             <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
+              type={"primary"}
+              loading={editingAccess}
+              onClick={async () => {
+                setEditingAccess(false);
+                await tx(writeContracts.Nestdrop.kill());
+                message.info("Contract no longer accessible");
+                setEditingAccess(false);
               }}
-              size="large"
-              shape="round"
+              disabled={false}
             >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
+              selfDestruct
             </Button>
           </Col>
         </Row>
