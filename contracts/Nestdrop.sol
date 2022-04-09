@@ -14,7 +14,7 @@ contract Nestdrop {
     //declaration of our token contract
     IERC20 public token;
     //mapping of admins to bool
-    mapping(address => bool) private admins;
+    mapping(address => bool) public admins;
 
     //event to track airdrop
     event Dispatched(address customer, uint amount);

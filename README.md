@@ -140,31 +140,49 @@ $ npx hardhat run scripts/deploy.js --network rinkeby
 $ npx hardhat verify 0x86A39190b8f4a7515e82d0c68E00e4144230AD2D --network rinkeby "0x676c6c08C4F81182a40dBcf399b07222E0FdDb70"
 ```
 #
-> ## Testing the smartcontract
-We ran tests using coverage to view the extent of our tests and tests to ensure that the code functions as expected
-#
-> ### Coverage
-- Install Solidity Coverage
-```
-  $ npm i solidity-coverage
-```
-- Add require('solidity-coverage') to hardhat.config.json
 
-- Import Ganache
-``` 
-  $ npm i install ganache-cli
-``` 
-- Run coverage
-```
-$ npx hardhat coverage --network localhost
-```
+
 > ### Test
 
 - To test the smartcontract:
-``` 
-$ npx hardhat test --network localhost
-``` 
-#
-> ## Verified Contract Address:
 
- https://rinkeby.etherscan.io/address/0x86A39190b8f4a7515e82d0c68E00e4144230AD2D#code
+```
+$ npx hardhat test --network localhost
+```
+
+> ### Coverage Test:
+
+- To use  Solidity Coverage
+```
+  $ npm i solidity-coverage
+```
+- add to your hardhat config file 
+```
+require('solidity-coverage')
+```
+
+- Import Ganache
+```
+  $ npm i install ganache-cli
+
+  $ npx hardhat coverage --network localhost
+```
+
+
+
+#
+
+> ## Verified Contract Address:
+>
+- The NestDrop Contract Address 
+```
+ https://rinkeby.etherscan.io/address/0x893dBc6F19de9Fc46B5E80Ca870EfFC82082a5DD#code
+
+```
+
+- The NestCoin Contract Address
+
+```
+https://rinkeby.etherscan.io/address/0xbcA1E4B245b3F1f9b840E0eB74Dd9545878A6D91#code
+
+
