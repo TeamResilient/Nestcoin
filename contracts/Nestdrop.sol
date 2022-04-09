@@ -17,7 +17,10 @@ contract Nestdrop {
     mapping(address => bool) public admins;
 
     //event to track airdrop
-    event Dispatched(address customer, uint amount);
+    //event Dispatched(address customer, uint amount);
+    event AssignedAdmin(address adder, address newAdmin);
+    event RemovedAdmin(address removerAdmin, address newAdmin);
+  event DispatchRewards(address sender, uint256 total);
 
     //modifier to ensure only admins can call selected functions.
     modifier isAdmin(address _user) {
@@ -29,12 +32,16 @@ contract Nestdrop {
     //add an admin address
     function assignAdmin(address _newAdmin) public isAdmin(msg.sender) {
         admins[_newAdmin] = true;
+            //emit event
+        emit AssignedAdmin(msg.sender, _newAdmin );
     }
 
     //remove an admin address
     function removeAdmin(address _admin) public isAdmin(msg.sender) {
         require(admins[_admin], "Address is not an admin.");
         admins[_admin] = false;
+        //emit event
+        emit RemovedAdmin(msg.sender, _admin );
     }
 
     //distribute rewards to eligible customers
@@ -51,14 +58,19 @@ contract Nestdrop {
             _address.length <= 200,
             "sorry, maximum number of addresses on a list cannot be more than 200"
         );
-
+uint totalreward =0;
         for (uint i = 0; i < _address.length; i++) {
             uint256 userRewards = _rewards[i] * 10**18;
+            
             require(token.transfer(_address[i], userRewards));
+            totalreward = totalreward + userRewards;
 
-            emit Dispatched(_address[i], userRewards);
+             totalreward;
         }
+            //emit event with total sent
+        emit DispatchRewards(msg.sender, totalreward);
     }
+    //destroy contract
 
     function kill() external isAdmin(msg.sender) {
         selfdestruct(payable(msg.sender));
