@@ -169,8 +169,14 @@ $ npx hardhat test --network localhost
 >
 - The NestDrop Contract Address 
 
-  https://rinkeby.etherscan.io/address/0x893dBc6F19de9Fc46B5E80Ca870EfFC82082a5DD#code
+  https://rinkeby.etherscan.io/address/0x43f71fbd58e9600924f49a53c6fde787977c2b9d#code
 
 
 - The NestCoin Contract Address
-https://rinkeby.etherscan.io/address/0xbcA1E4B245b3F1f9b840E0eB74Dd9545878A6D91#code
+
+  https://rinkeby.etherscan.io/address/0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937#code
+  
+- Live link
+  
+  https://resilentcinema.netlify.app/
+  
