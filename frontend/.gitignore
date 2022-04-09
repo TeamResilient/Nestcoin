@@ -1,0 +1,19 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.env
+coverage
+coverage.json
+typechain
+verify
+
+#Hardhat files
+cache
+artifacts
+.vscode
+.env
+coverage
+coverage.json
+typechain
