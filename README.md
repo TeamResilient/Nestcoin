@@ -17,6 +17,7 @@
   - [Coverage](#coverage)
   - [Test](#test)
 - [Verified Contract Addresses](#verified-contract-addresses)
+- [Live link](#live-link)
 #
 > ## Overview
 <p align="justify">
@@ -166,7 +167,7 @@ $ npx hardhat test --network localhost
 ``` 
 #
 > ## Verified Contract Addresses
->
+
 - The NestDrop Contract Address 
 
   https://rinkeby.etherscan.io/address/0x43f71fbd58e9600924f49a53c6fde787977c2b9d#code
@@ -176,7 +177,7 @@ $ npx hardhat test --network localhost
 
   https://rinkeby.etherscan.io/address/0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937#code
   
-- Live link
+> ## Live link
   
-  https://resilentcinema.netlify.app/
+  - https://resilentcinema.netlify.app/
   

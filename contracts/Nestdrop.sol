@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 //importing our Nestcoin token contract
 import "./NestCoin.sol";
 
-//declaring the  contract is ownable to enable us call functions from the inherited contacts
+//declaring the contract is ownable to enable us call functions from the inherited contacts
 contract Nestdrop {
     constructor(address _NestCoin) {
         admins[msg.sender] = true;
@@ -20,7 +20,7 @@ contract Nestdrop {
     //event Dispatched(address customer, uint amount);
     event AssignedAdmin(address adder, address newAdmin);
     event RemovedAdmin(address removerAdmin, address newAdmin);
-  event DispatchRewards(address sender, uint256 total);
+    event DispatchRewards(address sender, uint256 total);
 
     //modifier to ensure only admins can call selected functions.
     modifier isAdmin(address _user) {
@@ -54,24 +54,28 @@ contract Nestdrop {
             _address.length == _rewards.length,
             "Array Lengths must be equal."
         );
+
+        //ensure that rewards are sent in batches of 200
         require(
             _address.length <= 200,
             "sorry, maximum number of addresses on a list cannot be more than 200"
         );
-uint totalreward =0;
+
+        uint totalreward =0;
         for (uint i = 0; i < _address.length; i++) {
             uint256 userRewards = _rewards[i] * 10**18;
             
             require(token.transfer(_address[i], userRewards));
             totalreward = totalreward + userRewards;
-
-             totalreward;
+            
+            totalreward;
         }
-            //emit event with total sent
+        
+        //emit event with total sent
         emit DispatchRewards(msg.sender, totalreward);
     }
-    //destroy contract
 
+    //destroy contract
     function kill() external isAdmin(msg.sender) {
         selfdestruct(payable(msg.sender));
     }
