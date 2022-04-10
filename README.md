@@ -75,11 +75,13 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 - Node JS
 #
 > ## Setup the Project
-### \*Note:
+**`*Note:`**
 
-- This project was setup on a windows 10 system using the gitbash terminal. Some of the commands used may not work with the VScode terminal, command prompt or powershell.
+<p align="justify">
+This project was setup on a windows 10 system using the gitbash terminal. Some of the commands used may not work with the VScode terminal, command prompt or powershell.
+</p>
 
-- The steps involved are outlined below:-
+The steps involved are outlined below:-
 #
 > ### Install Hardhat
 The first step involves cloning and installing hardhat.
@@ -90,12 +92,12 @@ $ npm i -D hardhat
 
 $ npm install
 
-# Delete the old package-lock.json
-
 $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@nomiclabs/hardhat-ethers" "ethers" "web3" "@nomiclabs/hardhat-web3" "@nomiclabs/hardhat-etherscan" "@openzeppelin/contracts" "dotenv"
+
+# If you encounter errors installing the dependencies above, delete the old package-lock.json and run the `npm install --save-dev` command again
 ```
 > ### Env Setup
- Next create a '.env' file by using the sample.env. Retrieve your information from the relevant sites and input the information where needed in the .env file.
+ Next create a `.env` file by using the sample.env. Retrieve your information from the relevant sites and input the information where needed in the `.env` file.
 
 `To retrieve your metamask private key.`
 - Open your account details by clicking on the three dots on the metamask extension on your chrome browser
@@ -163,7 +165,9 @@ $ npx hardhat run scripts/deploy.js --network rinkeby
 ```
 $ npx hardhat verify 0x43f71fbd58e9600924f49a53c6fde787977c2b9d --network rinkeby "0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937"
 ```
-Note* - the first contract written after verify in the code is the `Nestdrop.sol` address recieved after the deployment while the second contract after rinkeby is the `Nestcoin.sol` address
+**`*Note:`**
+
+The first contract written after *verify* in the code above is the `Nestdrop.sol` address recieved after *deployment* while the second contract after rinkeby is the `Nestcoin.sol` address
 #
 > ## Setup the Frontend
 - First run the frontend on your local server to ensure it's fully functional before building for production.
@@ -193,7 +197,7 @@ $ npm run build
 #
 > ## Testing the Smartcontract
 
-- Coverage was used to view the extent of our tests and unittests were implemented to ensure that the code functions as expected
+- Coverage is used to view the percentage of the code required by tests and unittests were implemented to ensure that the code functions as expected
 #
 > ### Coverage
 - Install Solidity Coverage
@@ -234,7 +238,8 @@ $ npx hardhat test --network localhost
 - The NestCoin Contract Address
 
   https://rinkeby.etherscan.io/address/0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937#code
-  
+
+#  
 > ## Live Link
   
   - https://resilentcinema.netlify.app/
