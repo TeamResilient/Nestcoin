@@ -223,4 +223,4 @@ $ npx hardhat test --network localhost
   
   - https://resilentcinema.netlify.app/
 #
-> ##### README Created by: `Pauline Banye`
+> ##### README Created by: `Team Resilient`
