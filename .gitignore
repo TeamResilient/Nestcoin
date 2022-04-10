@@ -5,9 +5,8 @@ node_modules
 coverage
 coverage.json
 typechain
+package-lock.json
 
 #Hardhat files
 cache
-artifacts
-hardhat.config.js
-
+.DS_Store
