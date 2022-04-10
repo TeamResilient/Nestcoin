@@ -14,9 +14,7 @@ module.exports = {
     localhost: {
       url: "http://localhost:8545",
       /*      
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      
+        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy (you can put in a mnemonic here to set the deployer locally).
       */
     },
     rinkeby: {
@@ -28,4 +26,6 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_KEY,
   },
 };
- 
+
+
+

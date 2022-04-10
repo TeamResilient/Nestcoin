@@ -23,6 +23,8 @@
   - [Test](#test)
 - [Verified Contract Addresses](#verified-contract-addresses)
 - [Live Link](#live-link)
+- [Contributors](#contributors)
+- [Contributing to the project](#contributing-to-the-project)
 #
 > ## Overview
 <p align="justify">
@@ -88,7 +90,7 @@ $ npm i -D hardhat
 
 $ npm install
 
-- Delete the old package-lock.json
+# Delete the old package-lock.json
 
 $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@nomiclabs/hardhat-ethers" "ethers" "web3" "@nomiclabs/hardhat-web3" "@nomiclabs/hardhat-etherscan" "@openzeppelin/contracts" "dotenv"
 ```
@@ -101,7 +103,9 @@ $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@
 - Verify your password
 - Copy your private key and place it in the .env file
 
-![metamask](https://drive.google.com/uc?export=view&id=1oDl0IbicD7LhNOcYUbGzBYTJdduWim1t)
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=1oDl0IbicD7LhNOcYUbGzBYTJdduWim1t" alt="metamask"/>
+</p>
 
 #
 `To retrieve your alchemy key.`
@@ -111,7 +115,11 @@ $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@
 - Once the app has been created, click on view key.
 - Copy the HTTP and place it in the .env file.
 
-![alchemy](https://drive.google.com/uc?export=view&id=1XFtACFN-LWvoDUD1QyJJY9uOc7KNkrL6)
+
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=1XFtACFN-LWvoDUD1QyJJY9uOc7KNkrL6" alt="alchemy"/>
+</p>
+
 #
 `To retrieve your etherscan key.`
 - Login to [etherscan](https://etherscan.io/) and hover over the dropdown arrow for your profile on the navbar.
@@ -119,12 +127,20 @@ $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@
 - Once the project has been created, click on the copy button to copy the API key.
 - Paste it in the .env file
 
-![etherscan](https://drive.google.com/uc?export=view&id=1Gq-hPuwjwb3TOCH2dqUA93VxfyrbUDN6)
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=1Gq-hPuwjwb3TOCH2dqUA93VxfyrbUDN6" alt="etherscan key"/>
+</p>
+
 #
 > ### Setup Hardhat.config
 
+
 Below is the setup for the hardhat.config.json
-![hardhat](https://drive.google.com/uc?export=view&id=1Wmc2o2DnF5K6Q5y0CTCjVUfUIoLVm2ei)
+
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=1Wmc2o2DnF5K6Q5y0CTCjVUfUIoLVm2ei" alt="hardhat"/>
+</p>
+
 #
 > ## Create the SmartContract
   - First write the Smartcontract codes within the contracts folder.
@@ -223,4 +239,27 @@ $ npx hardhat test --network localhost
   
   - https://resilentcinema.netlify.app/
 #
-> ##### README Created by: `Pauline Banye`
+
+> ## Contributors
+
+This Project was created by the members of TeamResilient during the Blockgames Internship.
+
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=10Ibk5J441crY7Dh4DVPVM5bwx0JenaRL" alt="teamresilient"/>
+</p>
+
+#
+> ## Contributing to the project
+
+If you find something worth contributing, please fork the repo, make a pull request and add valid and well-reasoned explanations about your changes or comments.
+
+Before adding a pull request, please note:
+
+- This is an open source project.
+- Your contributions should be inviting and clear.
+- Any additions should be relevant.
+- New features should be easy to contribute to.
+
+All **`suggestions`** are welcome!
+#
+> ###### README Created by `Pauline Banye` for TeamResilient
