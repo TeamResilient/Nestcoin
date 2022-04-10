@@ -1,7 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
-const dotenv = require("dotenv");
 require('solidity-coverage')
+const dotenv = require("dotenv");
 
 dotenv.config();
 const defaultNetwork = "rinkeby";
@@ -28,3 +28,4 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_KEY,
   },
 };
+ 

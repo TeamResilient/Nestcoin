@@ -6,18 +6,23 @@
 - [Technologies](#technologies)
 - [Repo Setup](#repo-setup)
 - [Requirements](#requirements)
-- [Setting up the project](#setting-up-the-project)
-  - [Install hardhat](#install-hardhat)
-  - [Env setup](#env-setup)
-  - [Setup hardhat.config](#setup-hardhatconfig)
+- [Setup the Project](#setup-the-project)
+  - [Install Hardhat](#install-hardhat)
+  - [Env Setup](#env-setup)
+  - [Setup Hardhat.config](#setup-hardhatconfig)
+- [Create the SmartContract](#create-the-smartcontract)
   - [Compile](#compile)
   - [Deploy](#deploy)
   - [Verify](#verify)
-- [Testing the smartcontract](#testing-the-smartcontract)
+- [Setup the Frontend](#setup-the-frontend)
+  - [Install Dependencies](#install-dependencies)
+  - [Start Server](#start-server)
+  - [Build the Frontend](#build-the-frontend)
+- [Testing the Smartcontract](#testing-the-smartcontract)
   - [Coverage](#coverage)
   - [Test](#test)
 - [Verified Contract Addresses](#verified-contract-addresses)
-- [Live link](#live-link)
+- [Live Link](#live-link)
 #
 > ## Overview
 <p align="justify">
@@ -67,29 +72,27 @@ Change directory to the cloned repo and set the original Nestcoin repository as 
 - Etherscan.io API Url
 - Node JS
 #
-> ## Setting up the project
+> ## Setup the Project
 ### \*Note:
 
 - This project was setup on a windows 10 system using the gitbash terminal. Some of the commands used may not work with the VScode terminal, command prompt or powershell.
 
 - The steps involved are outlined below:-
 #
-> ### Install hardhat
+> ### Install Hardhat
 The first step involves cloning and installing hardhat.
 ```shell
-$ git clone https://github.com/TeamResilient/Nestcoin.git
-
 $ cd Nestcoin
 
 $ npm i -D hardhat
 
-$ npx hardhat
+$ npm install
 
-$ yarn install
+- Delete the old package-lock.json
 
 $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@nomiclabs/hardhat-ethers" "ethers" "web3" "@nomiclabs/hardhat-web3" "@nomiclabs/hardhat-etherscan" "@openzeppelin/contracts" "dotenv"
 ```
-> ### Env setup
+> ### Env Setup
  Next create a '.env' file by using the sample.env. Retrieve your information from the relevant sites and input the information where needed in the .env file.
 
 `To retrieve your metamask private key.`
@@ -118,13 +121,17 @@ $ npm install --save-dev "@nomiclabs/hardhat-waffle" "ethereum-waffle" "chai" "@
 
 ![etherscan](https://drive.google.com/uc?export=view&id=1Gq-hPuwjwb3TOCH2dqUA93VxfyrbUDN6)
 #
-> ### Setup hardhat.config
+> ### Setup Hardhat.config
 
 Below is the setup for the hardhat.config.json
 ![hardhat](https://drive.google.com/uc?export=view&id=1Wmc2o2DnF5K6Q5y0CTCjVUfUIoLVm2ei)
 #
+> ## Create the SmartContract
+  - First write the Smartcontract codes within the contracts folder.
+  - The next step involves the compilation, deployment and verification of the contract on the testnet.
+
 > ### Compile
-- compile the smartcontract before deployment:
+- To compile the smartcontract before deployment:
 ```
 $ npx hardhat compile
 ```
@@ -138,20 +145,48 @@ $ npx hardhat run scripts/deploy.js --network rinkeby
 > ### Verify
 - To verify the smartcontract:
 ```
-$ npx hardhat verify 0x86A39190b8f4a7515e82d0c68E00e4144230AD2D --network rinkeby "0x676c6c08C4F81182a40dBcf399b07222E0FdDb70"
+$ npx hardhat verify 0x43f71fbd58e9600924f49a53c6fde787977c2b9d --network rinkeby "0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937"
+```
+Note* - the first contract written after verify in the code is the `Nestdrop.sol` address recieved after the deployment while the second contract after rinkeby is the `Nestcoin.sol` address
+#
+> ## Setup the Frontend
+- First run the frontend on your local server to ensure it's fully functional before building for production.
+#
+> ### Install Dependencies
+- Setup and install dependencies
+
+```shell
+$ cd frontend
+
+$ npm install
+
+$ npm install react-scripts@latest
 ```
 #
-> ## Testing the smartcontract
-We ran tests using coverage to view the extent of our tests and tests to ensure that the code functions as expected
+> ### Start Server
+- Start the server on localhost
+```
+$ npm run start
+```
+#
+> ### Build the Frontend
+- Create an optimized production build, which can be hosted on sites like Heroku, Netlify, Surge etc.
+```
+$ npm run build
+```
+#
+> ## Testing the Smartcontract
+
+- Coverage was used to view the extent of our tests and unittests were implemented to ensure that the code functions as expected
 #
 > ### Coverage
 - Install Solidity Coverage
 ```
   $ npm i solidity-coverage
 ```
-- Add require('solidity-coverage') to hardhat.config.json
+- Add `require('solidity-coverage')` to hardhat.config.json
 
-- Import Ganache
+- Install Ganache
 ``` 
   $ npm i install ganache-cli
 ``` 
@@ -159,10 +194,17 @@ We ran tests using coverage to view the extent of our tests and tests to ensure 
 ```
 $ npx hardhat coverage --network localhost
 ```
+#
 > ### Test
 
-- To test the smartcontract:
+- To test the smartcontract, first open a terminal and run the following command:
+
 ``` 
+$ npx hardhat node
+```
+- Leave the previous terminal running and open new terminal. 
+- Run the command below:
+```
 $ npx hardhat test --network localhost
 ``` 
 #
@@ -177,7 +219,8 @@ $ npx hardhat test --network localhost
 
   https://rinkeby.etherscan.io/address/0x33d57e4712e4c4dc6ff50e3319e1e79d7eabc937#code
   
-> ## Live link
+> ## Live Link
   
   - https://resilentcinema.netlify.app/
-  
+#
+> ##### README Created by: `Pauline Banye`
