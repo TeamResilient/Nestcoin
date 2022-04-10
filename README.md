@@ -28,7 +28,7 @@
 #
 > ## Overview
 <p align="justify">
-Nestcoin is a filmhouse that would like to further engage with their audience. They would like to create a currency which would be used to reward loyal customers. The curremcy would later be traded for backstage passes and other perks.
+Nestcoin is a filmhouse that would like to further engage with their audience. They would like to create a currency which would be used to reward loyal customers. The currency would later be traded for backstage passes and other perks.
 
 Interestingly they began accepting crypto-based payments a year ealiers and would like to harness the power of Web3 to implement their solution.
 </p>
